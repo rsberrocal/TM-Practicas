@@ -34,10 +34,14 @@ h264 -> 388K
 
 Com es pot observar el que te una major mida es el de MJPEG i el de menor el mpeg4.
 
-![image info](./mjpeg_info.png)
-![image info](./mpeg1vide_info.png)
-![image info](./mpeg4_info.png)
-![image info](./h264_info.png)
+| MJPEG   | MPEG1video |
+| ---------|:------:|
+|![image info](./mjpeg_info.png)|![image info](./mpeg1video_info.png)|
+
+| MPEG4   | H264 |
+| ---------|:------:|
+|![image info](./mpeg4_info.png)|![image info](./h264_info.png)|
+
 
 Si ens quedem amb els valors del final (utime, rtime). Veiem que el h264 es el que més temps ha trigat en la cpu i en memòria
 
@@ -48,7 +52,7 @@ respecte a la mida total del fitxer comprimit amb mjpeg. Per què prenem aquest 
 referència? 
 
 | Codec       | ratio |
-| ----------- |------:|
+| ----------- |:------:|
 |	mpeg1video|2.517857|
 |	mpeg4	  |2.9375|
 |	h264	  |1.453608|
