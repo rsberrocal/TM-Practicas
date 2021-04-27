@@ -92,6 +92,14 @@ mantenint el nombre d’imatges de referència a 0 i el framerate a 25. Fixeu-vo
 tal de visualitzar la proporció de frames I i P. Feu una gràfica de com és modifica el ràtio de
 compressió en funció d’aquesta proporció. Expliqueu el resultat
 
+Com podem veure a la seguent imatge: 
+
+![image info](./relacioIPB.png)
+
+La ràtio de i i p es van modificant amb prioritat, podem veure que hi té prioritat per créixer va amb aquest ordre, b, p i per últim i, aquesta és la que es fa petita més ràpida, fins que dóna la majoria de la seva proporció a b i p, que aquestes a posterior, s'aniran repartint la proporció decantant-se més a b. Això és normal si tenim en compte si els I són frames que inclouen tota la dada de la imatge, P seran frames que inclouen informació de canvis entre P o I i per últim les B es basa de frames que han sigut codificats a través de dues imatges de referència. Ens beneficia d'aquesta forma tenir el màxim de B frames, ja que ocupen 10% del que ocupa un I frame. 
+
+![image info](./timeIPB.png)
+
 ---
 
 **Exercici 6.**
@@ -101,6 +109,9 @@ Mantenint el GOP i el nombre d’imatges de referència constants, i sense modif
 framerate a l’entrada, modifiqueu el de sortida en valors entre 5 i 25. Genereu una gràfica amb
 la mida dels fitxers resultants. És el que esperàveu? Quin creieu que és el motiu? Observeu alguna
 relació quantitativa entre el framerate i la mida del fitxer?
+
+![image info](./frameRatePes.png)
+Ens podíem imaginar que el pes seria major en anar pujant de framerate, com podem veure a la gràfica, hem encertat de ple. Això és degut de quan de major és el framerate major són els fotogrames per segon, i el càlcul serà més pesat per més imatges a encapsular.
 
 ---
 
