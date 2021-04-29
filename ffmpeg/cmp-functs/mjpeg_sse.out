@@ -1,8 +1,6 @@
 ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
   built with gcc 9 (Ubuntu 9.3.0-10ubuntu2)
   configuration: --prefix=/usr --extra-version=1ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-avresample --disable-filter=resample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librsvg --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-nvenc --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
-  WARNING: library configuration mismatch
-  avcodec     configuration: --prefix=/usr --extra-version=1ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-avresample --disable-filter=resample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librsvg --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-nvenc --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared --enable-version3 --disable-doc --disable-programs --enable-libaribb24 --enable-liblensfun --enable-libopencore_amrnb --enable-libopencore_amrwb --enable-libtesseract --enable-libvo_amrwbenc
   libavutil      56. 31.100 / 56. 31.100
   libavcodec     58. 54.100 / 58. 54.100
   libavformat    58. 29.100 / 58. 29.100
@@ -18,7 +16,7 @@ Input #0, image2, from './Cubo/Cubo%02d.png':
 Stream mapping:
   Stream #0:0 -> #0:0 (png (native) -> mjpeg (native))
 Press [q] to stop, [?] for help
-[swscaler @ 0x562e4738de80] deprecated pixel format used, make sure you did set range correctly
+[swscaler @ 0x55dc6bc61a00] deprecated pixel format used, make sure you did set range correctly
 Output #0, avi, to 'cmp-functs/cub_mjpeg_sse.avi':
   Metadata:
     ISFT            : Lavf58.29.100
@@ -27,7 +25,7 @@ Output #0, avi, to 'cmp-functs/cub_mjpeg_sse.avi':
       encoder         : Lavc58.54.100 mjpeg
     Side data:
       cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
-frame=  100 fps=0.0 q=24.8 Lsize=     560kB time=00:00:04.00 bitrate=1147.7kbits/s speed=12.5x    
+frame=  100 fps=0.0 q=24.8 Lsize=     560kB time=00:00:04.00 bitrate=1147.7kbits/s speed=52.7x    
 video:552kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.438541%
-bench: utime=0.271s stime=0.007s rtime=0.320s
-bench: maxrss=49356kB
+bench: utime=0.220s stime=0.000s rtime=0.077s
+bench: maxrss=52696kB

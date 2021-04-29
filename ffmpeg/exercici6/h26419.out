@@ -1,0 +1,44 @@
+ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
+  built with gcc 9 (Ubuntu 9.3.0-10ubuntu2)
+  configuration: --prefix=/usr --extra-version=1ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-avresample --disable-filter=resample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librsvg --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-nvenc --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, image2, from './Cubo/Cubo%02d.png':
+  Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
+    Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> h264 (libx264))
+Press [q] to stop, [?] for help
+[libx264 @ 0x56046a631a80] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 0x56046a631a80] profile High 4:4:4 Predictive, level 1.2, 4:4:4 8-bit
+Output #0, avi, to 'exercici6/cubo_h264_g100_ref0_r19.avi':
+  Metadata:
+    ISFT            : Lavf58.29.100
+    Stream #0:0: Video: h264 (libx264) (H264 / 0x34363248), yuv444p, 320x240, q=-1--1, 19 fps, 19 tbn, 19 tbc
+    Metadata:
+      encoder         : Lavc58.54.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: -1
+frame=   77 fps=0.0 q=-1.0 Lsize=     363kB time=00:00:03.94 bitrate= 753.1kbits/s dup=0 drop=23 speed=21.6x    
+video:356kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 2.080037%
+bench: utime=0.628s stime=0.021s rtime=0.183s
+bench: maxrss=90448kB
+[libx264 @ 0x56046a631a80] frame I:13    Avg QP:24.29  size:  6798
+[libx264 @ 0x56046a631a80] frame P:24    Avg QP:27.38  size:  4850
+[libx264 @ 0x56046a631a80] frame B:40    Avg QP:28.50  size:  3982
+[libx264 @ 0x56046a631a80] consecutive B-frames: 26.0% 13.0%  3.9% 57.1%
+[libx264 @ 0x56046a631a80] mb I  I16..4: 20.4%  0.0% 79.6%
+[libx264 @ 0x56046a631a80] mb P  I16..4: 12.9%  0.0% 56.2%  P16..4: 11.7% 11.3%  4.9%  0.0%  0.0%    skip: 2.9%
+[libx264 @ 0x56046a631a80] mb B  I16..4:  3.5%  0.0% 29.6%  B16..8: 25.6% 20.3%  6.8%  direct: 5.1%  skip: 9.1%  L0:39.8% L1:41.5% BI:18.8%
+[libx264 @ 0x56046a631a80] coded y,u,v intra: 74.4% 61.3% 64.6% inter: 37.6% 13.9% 17.1%
+[libx264 @ 0x56046a631a80] i16 v,h,dc,p: 20% 35% 17% 28%
+[libx264 @ 0x56046a631a80] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 26% 13% 18%  9%  6%  8%  5% 12%  5%
+[libx264 @ 0x56046a631a80] Weighted P-Frames: Y:8.3% UV:8.3%
+[libx264 @ 0x56046a631a80] kb/s:718.61

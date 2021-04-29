@@ -10,6 +10,21 @@ ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
   libswscale      5.  5.100 /  5.  5.100
   libswresample   3.  5.100 /  3.  5.100
   libpostproc    55.  5.100 / 55.  5.100
-[image2 @ 0x55da0c8226c0] Could find no file with path './imagenes/Cubo%02d.png' and index in the range 0-4
-./imagenes/Cubo%02d.png: No such file or directory
-bench: maxrss=35668kB
+Input #0, image2, from './Cubo/Cubo%02d.png':
+  Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
+    Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg4 (native))
+Press [q] to stop, [?] for help
+Output #0, avi, to 'cub_mpeg4.avi':
+  Metadata:
+    ISFT            : Lavf58.29.100
+    Stream #0:0: Video: mpeg4 (FMP4 / 0x34504D46), yuv420p, 320x240, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc58.54.100 mpeg4
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=  100 fps=0.0 q=31.0 Lsize=     193kB time=00:00:04.00 bitrate= 394.6kbits/s speed=43.1x    
+video:185kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 4.298182%
+bench: utime=0.211s stime=0.013s rtime=0.093s
+bench: maxrss=54000kB

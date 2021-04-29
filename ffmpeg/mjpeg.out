@@ -10,6 +10,22 @@ ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
   libswscale      5.  5.100 /  5.  5.100
   libswresample   3.  5.100 /  3.  5.100
   libpostproc    55.  5.100 / 55.  5.100
-[image2 @ 0x55a10ce076c0] Could find no file with path './imagenes/Cubo%02d.png' and index in the range 0-4
-./imagenes/Cubo%02d.png: No such file or directory
-bench: maxrss=35524kB
+Input #0, image2, from './Cubo/Cubo%02d.png':
+  Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
+    Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x555dbe3ef700] deprecated pixel format used, make sure you did set range correctly
+Output #0, avi, to 'cub_mjpeg.avi':
+  Metadata:
+    ISFT            : Lavf58.29.100
+    Stream #0:0: Video: mjpeg (MJPG / 0x47504A4D), yuvj444p(pc), 320x240, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=  100 fps=0.0 q=24.8 Lsize=     560kB time=00:00:04.00 bitrate=1147.7kbits/s speed=52.6x    
+video:552kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.438541%
+bench: utime=0.220s stime=0.000s rtime=0.077s
+bench: maxrss=52260kB

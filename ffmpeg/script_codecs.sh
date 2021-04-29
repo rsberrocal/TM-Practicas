@@ -2,12 +2,13 @@
 
 codec_list="mjpeg mpeg1video mpeg4 h264" # Lista de codecs a utilizar
 functs_list="sad sse satd chroma" # Lista de opciones de comparacion
+algorithm_list="dia hex umh full"
 
 
 case "$1" in
 	-h|--help)
 	echo "Para hacer uso de este script existen las siguientes opciones:"
-	echo "-ex [3|5|6|7] Numero de ejercicio a ejecutar"
+	echo "-ex [3|5|6|7|8|9] Numero de ejercicio a ejecutar"
 	echo "Para algunos ejercicios es posible que se pidan mas parametros"
 	echo "Para el ejercicio 7 existe una opcion para ver el peso de los ficheros"
 	echo "-ex 7 size"
@@ -25,19 +26,22 @@ case "$1" in
 		# Usado para la pregunta 5
 		elif [[ "$2" == "5" ]]; then
 			for gop in {1..100..1}; do
-				echo ${gop}
-				[ -f cub_h264.avi ] && rm cub_h264.avi
- 				ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -g $gop -refs 0 -r 25 -codec:v h264 ./cubo_h264_g${gop}_ref0_r25.avi
- 				cat $h264.out | grep 'frame I:'
+				echo "GOP: ${gop}"
+				[ -f exercici5/cubo_h264_g${gop}_ref0_r25.avi ] && rm exercici5/cubo_h264_g${gop}_ref0_r25.avi
+ 				ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -g $gop -refs 0 -r 25 -codec:v h264 exercici5/cubo_h264_g${gop}_ref0_r25.avi > exercici5/h264${gop}.out 2>&1
+ 				cat exercici5/h264${gop}.out | grep 'frame I:'
+ 				cat exercici5/h264${gop}.out | grep 'frame B:' 
+ 				cat exercici5/h264${gop}.out | grep 'frame P:' 
  			done
 
  		# Usado para la pregunta 6
  		elif [[ "$2" == "6" ]]; then
 			for ra in {5..25..1}; do
-				echo ${ra}
-				[ -f cub_h264.avi ] && rm cub_h264.avi
- 				ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -g 100 -refs 0 -r ${ra} -codec:v h264 ./cubo_h264_g100_ref0_r${ra}.avi
- 				cat $h264.out | grep bench
+				echo "FrameRate: ${ra}"
+				[ -f exercici6/cubo_h264_g100_ref0_r${ra}.avi ] && rm exercici6/cubo_h264_g100_ref0_r${ra}.avi
+ 				ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -g 100 -refs 0 -r ${ra} -codec:v h264 exercici6/cubo_h264_g100_ref0_r${ra}.avi > exercici6/h264${ra}.out 2>&1
+ 				FILESIZE=$(stat -c%s exercici6/cubo_h264_g100_ref0_r${ra}.avi )
+ 				echo "$FILESIZE bytes"
  			done
 
 		elif [[ "$2" == "7" ]]; then
@@ -58,6 +62,32 @@ case "$1" in
 					done
 				done
 			fi
+
+		elif [[ "$2" == "8" ]]; then	
+			# Usado para las preguntas del 8
+			for codec in $codec_list; do 		
+				for algo in $algorithm_list; do
+					echo "${codec} - ${algo}"
+					[ -f algorithm-change/cub_${codec}_${algo}.avi ] && rm algorithm-change/cub_${codec}_${algo}.avi
+					ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -me_method ${algo} -codec:v ${codec} algorithm-change/${codec}_${algo}.avi > algorithm-change/${codec}_${algo}.out 2>&1
+					cat algorithm-change/${codec}_${algo}.out | grep bench
+					FILESIZE=$(stat -c%s algorithm-change/${codec}_${algo}.avi)
+ 					echo "$FILESIZE bytes"
+				done
+			done
+
+		elif [[ "$2" == "9" ]]; then
+			# Usado para las preguntas del 9
+			for codec in $codec_list; do 		
+				for ra in {0..100..5}; do
+					echo "${codec} - umh"
+					[ -f algorithm-change/cub_${codec}_${algo}.avi ] && rm algorithm-change/cub_${codec}_${algo}.avi
+					ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -me_method $umh -me_range ra -codec:v ${codec} algorithm-change/${codec}_${algo}.avi > algorithm-change/${codec}_${algo}.out 2>&1
+					
+					cat algorithm-change/${codec}_${algo}.out | grep bench # com mirar per comprovar quin es el valor més optim?
+
+				done
+			done
 		fi		
 	;;
 	*)
@@ -65,6 +95,3 @@ case "$1" in
     	exit 0
     ;;
 esac
-
-# Usado para las preguntas 5 y 6
-
