@@ -66,6 +66,7 @@ case "$1" in
 		elif [[ "$2" == "8" ]]; then	
 			# Usado para las preguntas del 8
 			for codec in $codec_list; do 		
+				#codec="h264" #testing
 				for algo in $algorithm_list; do
 					echo "${codec} - ${algo}"
 					[ -f algorithm-change/cub_${codec}_${algo}.avi ] && rm algorithm-change/cub_${codec}_${algo}.avi

@@ -15,4 +15,4 @@ Input #0, image2, from './Cubo/Cubo%02d.png':
     Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
 Codec AVOption me_method (Set motion estimation method) specified for output file #0 (algorithm-change/mjpeg_full.avi) has not been used for any stream. The most likely reason is either wrong type (e.g. a video option with no video streams) or that it is a private option of some encoder which was not actually used for any stream.
 File 'algorithm-change/mjpeg_full.avi' already exists. Overwrite ? [y/N] Not overwriting - exiting
-bench: maxrss=44944kB
+bench: maxrss=45060kB

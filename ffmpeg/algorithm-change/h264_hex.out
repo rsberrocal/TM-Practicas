@@ -14,4 +14,4 @@ Input #0, image2, from './Cubo/Cubo%02d.png':
   Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
     Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
 File 'algorithm-change/h264_hex.avi' already exists. Overwrite ? [y/N] Not overwriting - exiting
-bench: maxrss=45168kB
+bench: maxrss=45368kB

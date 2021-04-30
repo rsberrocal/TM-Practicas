@@ -183,6 +183,22 @@ cerca de desplaçament diamond (dia), hexagon (hex), uneven multi-hexagon (umh) 
 (amb full o bé amb el seu àlies esa). Quin considereu més òptim en el nostre cas? Expliqueu
 breument també el funcionament de les 4 opcions.
 
+### DIAMOND:
+
+
+
+### HEXAGON:
+
+
+
+### MULTI-HEXAGON:
+
+
+
+### COMPLERT: 
+
+
+
 ---
 
 **Exercici 9.**
