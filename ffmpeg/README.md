@@ -183,21 +183,24 @@ breument també el funcionament de les 4 opcions.
 
 ### DIAMOND:
 La posició anterior coneguda ho marco com un 0 i les posicions per intentar posteriorment un 1
-  
-  1
- 101
-  1
-
+ ```
+-1-
+101
+-1-
+```
 ### HEXAGON:
 El patro de 1 és iterat, i el de 2 es fan a posterior que tots els 1 s'han iterat. 
- 1 1
- 222
+```
+-1-1-
+-222-
 12021
- 222
- 1 1
-
+-222-
+-1-1-
+```
 ### MULTI-HEXAGON:
 Hi ha tres petrons diferents que s'executen un a un i posteriorment canvia al mateix patró que l'hexagon. 
+
+```
                 3
 
 
@@ -232,8 +235,10 @@ Hi ha tres petrons diferents que s'executen un a un i posteriorment canvia al ma
 
                 3
 
+```
 ### COMPLERT: 
 Aquest comprova totes les posicions fent-ho de forma exhaustiva.
+```
               ...
    111111111111111111111111
    111111111111111111111111
@@ -251,7 +256,7 @@ Aquest comprova totes les posicions fent-ho de forma exhaustiva.
    111111111111111111111111
    111111111111111111111111
               ...
-
+```
 
 Com podem veure els resultats ens demostren que el millor codec respecte qualitat és el h264. A on l'algorisme altera el pes del fitxer, mentre que els altres l'algoritme no modifica el pes. Per trobar la forma més òptima, ens fixarem amb la velocitat de processament i la resolució. No veiem molt canvi entre els algorismes, però sí que notem que el esa, el complet sembla ser una mica més nítid i fluid, ara bé, és el que ocupa més i tarda força més temps a processar. Al no veure canvi entendrem que en aquest cas la millor opció és sacrificar espai i temps de processament.
 
@@ -273,3 +278,5 @@ Hem testejat amb valors entre el 0 i el 100, ja que no teníem referència del q
 Tenint en conte els resultats de tots els exercicis anterior, proposeu quin creieu que és
 i per què el millor set de paràmetres a utilitzar amb el còdec h264. Utilitzeu el ffmpeg per
 generar aquest vídeo i comproveu visualment que la qualitat de la imatge és l’adequada.
+
+Hem de comptar amb un HOP 100, el frameRate que ens marca els fotogrames per segon, segons molts estudis el màxim de fotografies que pot captar un ull humà, així veient-ho al més fluid possible son de 40-60 fps, així que el FramexSecond el posarem en volts de 60, utilitzem el còdec h264 amb SATD, HEX amb una distància de 1024, com ho fa el DivX. Ja que hem pogut comprovar que elevar molt més la distància fa que es confonguin coses, i que els canvis sobtats com cantonades a vegades no es tractin correctament. Aquesta seria la millor resolució tenint en compte la velocitat i el que entenem nosaltres com a preferent fluidessa i nitedat intentant que sigui rapid i no ocupi més del compte. 

@@ -88,7 +88,15 @@ case "$1" in
  				echo "$FILESIZE bytes"
 
 			done
-			
+		
+		elif [[ "$2" == "10" ]]; then
+			echo "h264 GOP 100 R 60 UMH SATD hex 1024 "
+			[ -f exercici10/cub_h264_perf.avi ] && rm exercici10/cub_h264_perf.avi
+			ffmpeg -benchmark -r 60 -i ./Cubo/Cubo%02d.png -g 100 -cmp satd -me_method hex -me_range 1024 -codec:v h264 exercici10/cub_h264_perf.avi > exercici10/cub_h264_perf.out 2>&1
+			cat exercici10/cub_h264_perf.out | grep bench
+			FILESIZE=$(stat -c%s exercici10/cub_h264_perf.avi)
+ 			echo "$FILESIZE bytes"
+
 		fi		
 	;;
 	*)
