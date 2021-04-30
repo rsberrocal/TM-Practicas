@@ -14,5 +14,18 @@ Input #0, image2, from './Cubo/Cubo%02d.png':
   Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
     Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
 Codec AVOption me_method (Set motion estimation method) specified for output file #0 (algorithm-change/mpeg4_umh.avi) has not been used for any stream. The most likely reason is either wrong type (e.g. a video option with no video streams) or that it is a private option of some encoder which was not actually used for any stream.
-File 'algorithm-change/mpeg4_umh.avi' already exists. Overwrite ? [y/N] Not overwriting - exiting
-bench: maxrss=45132kB
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg4 (native))
+Press [q] to stop, [?] for help
+Output #0, avi, to 'algorithm-change/mpeg4_umh.avi':
+  Metadata:
+    ISFT            : Lavf58.29.100
+    Stream #0:0: Video: mpeg4 (FMP4 / 0x34504D46), yuv420p, 320x240, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc58.54.100 mpeg4
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=  100 fps=0.0 q=31.0 Lsize=     193kB time=00:00:04.00 bitrate= 394.6kbits/s speed=42.5x    
+video:185kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 4.298182%
+bench: utime=0.213s stime=0.008s rtime=0.095s
+bench: maxrss=54540kB

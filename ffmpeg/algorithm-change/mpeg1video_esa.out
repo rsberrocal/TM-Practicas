@@ -13,20 +13,19 @@ ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
 Input #0, image2, from './Cubo/Cubo%02d.png':
   Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
     Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
-Codec AVOption me_method (Set motion estimation method) specified for output file #0 (algorithm-change/mjpeg_dia.avi) has not been used for any stream. The most likely reason is either wrong type (e.g. a video option with no video streams) or that it is a private option of some encoder which was not actually used for any stream.
+Codec AVOption me_method (Set motion estimation method) specified for output file #0 (algorithm-change/mpeg1video_esa.avi) has not been used for any stream. The most likely reason is either wrong type (e.g. a video option with no video streams) or that it is a private option of some encoder which was not actually used for any stream.
 Stream mapping:
-  Stream #0:0 -> #0:0 (png (native) -> mjpeg (native))
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
 Press [q] to stop, [?] for help
-[swscaler @ 0x557328f44a00] deprecated pixel format used, make sure you did set range correctly
-Output #0, avi, to 'algorithm-change/mjpeg_dia.avi':
+Output #0, avi, to 'algorithm-change/mpeg1video_esa.avi':
   Metadata:
     ISFT            : Lavf58.29.100
-    Stream #0:0: Video: mjpeg (MJPG / 0x47504A4D), yuvj444p(pc), 320x240, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc
+    Stream #0:0: Video: mpeg1video (mpg1 / 0x3167706D), yuv420p, 320x240, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc
     Metadata:
-      encoder         : Lavc58.54.100 mjpeg
+      encoder         : Lavc58.54.100 mpeg1video
     Side data:
       cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
-frame=  100 fps=0.0 q=24.8 Lsize=     560kB time=00:00:04.00 bitrate=1147.7kbits/s speed=46.3x    
-video:552kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.438541%
-bench: utime=0.234s stime=0.000s rtime=0.087s
-bench: maxrss=52264kB
+frame=  100 fps=0.0 q=31.0 Lsize=     227kB time=00:00:03.96 bitrate= 470.2kbits/s speed=37.8x    
+video:219kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 3.619575%
+bench: utime=0.223s stime=0.000s rtime=0.105s
+bench: maxrss=53556kB

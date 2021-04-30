@@ -2,7 +2,7 @@
 
 codec_list="mjpeg mpeg1video mpeg4 h264" # Lista de codecs a utilizar
 functs_list="sad sse satd chroma" # Lista de opciones de comparacion
-algorithm_list="dia hex umh full"
+algorithm_list="dia hex umh esa"
 
 
 case "$1" in
@@ -78,17 +78,17 @@ case "$1" in
 			done
 
 		elif [[ "$2" == "9" ]]; then
-			# Usado para las preguntas del 9
-			for codec in $codec_list; do 		
-				for ra in {0..100..5}; do
-					echo "${codec} - umh"
-					[ -f algorithm-change/cub_${codec}_${algo}.avi ] && rm algorithm-change/cub_${codec}_${algo}.avi
-					ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -me_method $umh -me_range ra -codec:v ${codec} algorithm-change/${codec}_${algo}.avi > algorithm-change/${codec}_${algo}.out 2>&1
-					
-					cat algorithm-change/${codec}_${algo}.out | grep bench # com mirar per comprovar quin es el valor més optim?
+			# Usado para las preguntas del 9		
+			for dis in {0..10000..1000}; do
+				echo "h264 umh - ${dis}"
+				[ -f exercici9/cub_h264_umh_dis${dis}.avi ] && rm exercici9/cub_h264_umh_dis${dis}.avi
+				ffmpeg -benchmark -r 25 -i ./Cubo/Cubo%02d.png -me_method umh -me_range ${dis} -codec:v h264 exercici9/cub_h264_umh_dis${dis}.avi > exercici9/cub_h264_umh_dis${dis}.out 2>&1
+				cat exercici9/cub_h264_umh_dis${dis}.out | grep bench
+				FILESIZE=$(stat -c%s exercici9/cub_h264_umh_dis${dis}.avi)
+ 				echo "$FILESIZE bytes"
 
-				done
 			done
+			
 		fi		
 	;;
 	*)

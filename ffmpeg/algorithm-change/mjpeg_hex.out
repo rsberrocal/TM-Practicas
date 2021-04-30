@@ -14,5 +14,19 @@ Input #0, image2, from './Cubo/Cubo%02d.png':
   Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
     Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
 Codec AVOption me_method (Set motion estimation method) specified for output file #0 (algorithm-change/mjpeg_hex.avi) has not been used for any stream. The most likely reason is either wrong type (e.g. a video option with no video streams) or that it is a private option of some encoder which was not actually used for any stream.
-File 'algorithm-change/mjpeg_hex.avi' already exists. Overwrite ? [y/N] Not overwriting - exiting
-bench: maxrss=44984kB
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x560fd1e13a00] deprecated pixel format used, make sure you did set range correctly
+Output #0, avi, to 'algorithm-change/mjpeg_hex.avi':
+  Metadata:
+    ISFT            : Lavf58.29.100
+    Stream #0:0: Video: mjpeg (MJPG / 0x47504A4D), yuvj444p(pc), 320x240, q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=  100 fps=0.0 q=24.8 Lsize=     560kB time=00:00:04.00 bitrate=1147.7kbits/s speed=48.6x    
+video:552kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.438541%
+bench: utime=0.218s stime=0.008s rtime=0.083s
+bench: maxrss=52296kB

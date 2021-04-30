@@ -13,5 +13,35 @@ ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
 Input #0, image2, from './Cubo/Cubo%02d.png':
   Duration: 00:00:04.00, start: 0.000000, bitrate: N/A
     Stream #0:0: Video: png, rgb24(pc), 320x240, 25 fps, 25 tbr, 25 tbn, 25 tbc
-File 'algorithm-change/h264_dia.avi' already exists. Overwrite ? [y/N] Not overwriting - exiting
-bench: maxrss=45272kB
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> h264 (libx264))
+Press [q] to stop, [?] for help
+[libx264 @ 0x5595557d3840] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 0x5595557d3840] profile High 4:4:4 Predictive, level 1.3, 4:4:4 8-bit
+Output #0, avi, to 'algorithm-change/h264_dia.avi':
+  Metadata:
+    ISFT            : Lavf58.29.100
+    Stream #0:0: Video: h264 (libx264) (H264 / 0x34363248), yuv444p, 320x240, q=-1--1, 25 fps, 25 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc58.54.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: -1
+frame=  100 fps=0.0 q=-1.0 Lsize=     386kB time=00:00:03.92 bitrate= 806.2kbits/s speed=13.5x    
+video:378kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 2.104915%
+bench: utime=0.951s stime=0.025s rtime=0.291s
+bench: maxrss=92244kB
+[libx264 @ 0x5595557d3840] frame I:4     Avg QP:25.72  size:  6094
+[libx264 @ 0x5595557d3840] frame P:25    Avg QP:28.20  size:  4582
+[libx264 @ 0x5595557d3840] frame B:71    Avg QP:29.50  size:  3493
+[libx264 @ 0x5595557d3840] consecutive B-frames:  5.0%  0.0%  3.0% 92.0%
+[libx264 @ 0x5595557d3840] mb I  I16..4: 21.9%  0.0% 78.1%
+[libx264 @ 0x5595557d3840] mb P  I16..4: 14.1%  0.0% 53.1%  P16..4: 11.3% 12.8%  6.1%  0.0%  0.0%    skip: 2.6%
+[libx264 @ 0x5595557d3840] mb B  I16..4:  2.9%  0.0% 23.9%  B16..8: 28.0% 21.5%  7.0%  direct: 5.7%  skip:11.0%  L0:40.5% L1:41.3% BI:18.2%
+[libx264 @ 0x5595557d3840] coded y,u,v intra: 74.4% 58.9% 61.6% inter: 36.9% 12.2% 15.5%
+[libx264 @ 0x5595557d3840] i16 v,h,dc,p: 18% 34% 19% 29%
+[libx264 @ 0x5595557d3840] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 25% 12% 19%  9%  6%  8%  5% 12%  4%
+[libx264 @ 0x5595557d3840] Weighted P-Frames: Y:8.0% UV:8.0%
+[libx264 @ 0x5595557d3840] ref P L0: 47.1% 12.1% 21.2% 17.8%  1.8%
+[libx264 @ 0x5595557d3840] ref B L0: 88.9%  8.4%  2.8%
+[libx264 @ 0x5595557d3840] ref B L1: 95.5%  4.5%
+[libx264 @ 0x5595557d3840] kb/s:773.81

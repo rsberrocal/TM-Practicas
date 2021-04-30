@@ -184,19 +184,78 @@ cerca de desplaçament diamond (dia), hexagon (hex), uneven multi-hexagon (umh) 
 breument també el funcionament de les 4 opcions.
 
 ### DIAMOND:
-
-
+La posició anterior coneguda ho marco com un 0 i les posicions per intentar posteriorment un 1
+  
+  1
+ 101
+  1
 
 ### HEXAGON:
-
-
+El patro de 1 és iterat, i el de 2 es fan a posterior que tots els 1 s'han iterat. 
+ 1 1
+ 222
+12021
+ 222
+ 1 1
 
 ### MULTI-HEXAGON:
+Hi ha tres petrons diferents que s'executen un a un i posteriorment canvia al mateix patró que l'hexagon. 
+                3
 
 
+
+        3       3       3
+
+
+          3           3
+3               3               3
+                1
+    3       3       3       3
+                1
+3       3       3       3       3
+    3         3 1 3         3
+        3   3 22222 3   3
+            3 22122 3
+31 131 131 13121012131 131 131 13
+            3 22122 3
+        3   3 22222 3   3
+    3         3 1 3         3
+3       3       3       3       3
+                1
+    3       3       3       3
+                1
+3               3               3
+          3           3
+
+
+        3       3       3
+
+
+
+                3
 
 ### COMPLERT: 
+Aquest comprova totes les posicions fent-ho de forma exhaustiva.
+              ...
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+...111111111111011111111111...
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+   111111111111111111111111
+              ...
 
+
+Com podem veure els resultats ens demostren que el millor codec respecte qualitat és el h264. A on l'algorisme altera el pes del fitxer, mentre que els altres l'algoritme no modifica el pes. Per trobar la forma més òptima, ens fixarem amb la velocitat de processament i la resolució. No veiem molt canvi entre els algorismes, però sí que notem que el esa, el complet sembla ser una mica més nítid i fluid, ara bé, és el que ocupa més i tarda força més temps a processar. Al no veure canvi entendrem que en aquest cas la millor opció és sacrificar espai i temps de processament.
 
 
 ---
@@ -205,6 +264,9 @@ breument també el funcionament de les 4 opcions.
 
 Fixant el mètode d’estimació de desplaçament a umh, proveu diferents valors del rang
 de cerca de desplaçament. Quin valor resulta més òptim?
+
+![image info](./rangeumh.png)
+Hem testejat amb valors entre el 0 i el 100, ja que no teníem referència del que és normal, hem vist que en Dvix s'usa un 1024, llavors hem fet una prova de 0 a 10000 de 1000 en 1000, a on com podem veure a la imatge, el de 10000 està pitjor que el de 0, es pot observar en els cercles dibuixats que la línia del costat dret del cub no està tan definida com el de 0, la cantonada es veu molt més recta al de 0 i l'ombra es veu massa negra i sembla que hi ha alguna alteració de part del foc en la de 10000.
 
 ---
 
