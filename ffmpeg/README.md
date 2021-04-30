@@ -73,8 +73,7 @@ I de forma qualitativa, el codec amb millor qualitat seria el de h264, els altre
 
 **Exercici 4.**
 Realitzeu una taula amb els ràtios de compressió que obtenim amb els diferents còdecs
-respecte a la mida total del fitxer comprimit amb mjpeg. Per què prenem aquest fitxer com a
-referència? 
+respecte a la mida total del fitxer comprimit amb mjpeg. Per què prenem aquest fitxer com a referència? 
 
 | Codec       | ratio |
 | ----------- |:------:|
@@ -82,7 +81,6 @@ referència?
 |	mpeg4	  |2.9375|
 |	h264	  |1.453608|
 
-MIRAR PORQUE SE USA DE REFENRECIA
 
 ---
 
@@ -137,7 +135,7 @@ Donades dues tessel·les, es calculen les seves transformacions Hadamard  i desp
 
 ### Chroma
 
-NO HAY INFO
+No he trobat informació al respecte
 
 ### MJPG
 |Funció|Temps (s)|Mida|
