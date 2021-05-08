@@ -80,10 +80,9 @@ public class ImagePane extends GridPane implements Initializable {
                     Platform.runLater(() ->{
                         Image image = new Image(img.toURI().toString());
                         imageContainer.setImage(image);
-                        System.out.println("Putting image");
                     });
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(400);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
