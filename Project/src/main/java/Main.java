@@ -18,9 +18,14 @@ import java.util.regex.Pattern;
 public class Main extends Application {
 
     public static String input;
+    public static int binarisationValue = 0;
+    public static int avaragingValue = 0;
     public List<String> params;
 
-    public boolean hasInput = false;
+    public static boolean hasInput = false;
+    public static boolean hasBinarisation = false;
+    public static boolean hasNegative = false;
+    public static boolean hasAveraging = false;
 
     final static int WIDTH = 600;
     final static int HEIGHT = 400;
@@ -102,15 +107,52 @@ public class Main extends Application {
     }
 
     public void setBinarization(){
+        // --binarization {value}
+        // Filtro de binarizacion utilizando como threshold el valor indicado
+        int index = params.indexOf("--binarization");
+
+        if (index == -1) {
+            printError("--binarization es un parametro necesario.");
+        }
+        int dataIdx = index + 1;
+        if (dataIdx > params.size() -1){
+            printError("No se ha encotrado el parametro");
+        }
+        System.out.println();
+        // Mirar si es un zip o no
+        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--") ){
+            printError("El parametro no es correcto");
+        } else{
+            binarisationValue = Integer.parseInt(params.get(dataIdx));
+            hasBinarisation = true;
+        }
 
     }
 
     public void setNegative(){
-
+        this.hasNegative = true;
     }
 
     public void setAveraging(){
+        // --averaging {value}
+        // Se aplica un filtro de mediana sobre zonas de value x value
+        int index = params.indexOf("--averaging");
 
+        if (index == -1) {
+            printError("--averaging es un parametro necesario.");
+        }
+        int dataIdx = index + 1;
+        if (dataIdx > params.size() -1){
+            printError("No se ha encotrado el parametro");
+        }
+        System.out.println();
+        // Mirar si es un zip o no
+        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--") ){
+            printError("El parametro no es correcto");
+        } else{
+            avaragingValue = Integer.parseInt(params.get(dataIdx));
+            hasAveraging = true;
+        }
     }
 
     @Override
