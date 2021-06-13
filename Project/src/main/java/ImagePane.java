@@ -126,10 +126,11 @@ public class ImagePane extends GridPane implements Initializable {
         // 1. read images is done before
         // 2. make filters
         // 3. convert images to JPEG if they are not,
-        for (File img : images) {
-            Image image = new Image(img.toURI().toString());
-            BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
+        for (BufferedImage img : imagesBuffered) {
+            //Image image = new Image(img.toURI().toString());
+            //BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
             // need to encodeEncoder.
+            // encode ( img)
         }
 
     }
