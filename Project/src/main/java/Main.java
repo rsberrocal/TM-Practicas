@@ -1,19 +1,19 @@
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 public class Main extends Application {
 
@@ -21,6 +21,7 @@ public class Main extends Application {
     public static int binarisationValue = 0;
     public static int avaragingValue = 0;
     public List<String> params;
+    private ArrayList<BufferedImage> raw;
 
     public static boolean hasInput = false;
     public static boolean hasBinarisation = false;
@@ -37,7 +38,7 @@ public class Main extends Application {
         System.out.println("Es importante que sea un zip");
         System.out.println("-o, --output {path}");
         System.out.println("Nombre donde se va a guardar el archivo generado");
-        System.out.println("-e, --encode");
+        System.out.println("--encode");
         System.out.println("Se aplicara la codificacion sobre el conjunto de imagenes obtenido como input");
         System.out.println("-d, --decode");
         System.out.println("Se aplicara la decodificacion sobre el conjunto de imagenes obtenido como input");
@@ -94,8 +95,71 @@ public class Main extends Application {
 
     }
 
-    public void setEncode(){
+    // comentar
+    public static ArrayList<BufferedImage> extractArrayBImages(File zipFile) throws Exception{
+        ZipFile zip = null;
+        ArrayList <BufferedImage> images  = new ArrayList<>();
+        try {
+            zip = new ZipFile(zipFile);
+        } catch (ZipException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
+        Enumeration<? extends ZipEntry> zipComponent = zip.entries();
+        while(zipComponent.hasMoreElements()){
+            ZipEntry next = zipComponent.nextElement();
+            InputStream is = null;
+            try {
+                is = zip.getInputStream(next);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            ImageInputStream iis = null;
+            try {
+                iis = ImageIO.createImageInputStream(is);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            try {
+                BufferedImage bufferedImg = ImageIO.read(iis);
+                images.add(bufferedImg);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        zip.close();
+        return images;
+    }
+
+    public void setEncode(){
+        int index = params.indexOf("--encode");
+
+        if (index == -1) {
+            printError("--encode es un parametro necesario.");
+        }
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Necesitamos estos parametros: ");
+        System.out.println("GOP: ");
+        short gop = scan.nextShort();
+        System.out.println("Patch size: ");
+        short blockSize = scan.nextShort();
+        System.out.println("Offset: ");
+        short offset = scan.nextShort();
+        System.out.println("Quality: ");
+        float quality = scan.nextFloat();
+
+        try{
+            File zip = new File(input);
+            raw = this.extractArrayBImages(zip);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Encoder codificado = new Encoder(raw, quality, gop, blockSize,offset);
+        codificado.encode();
     }
 
     public void setDecode(){
