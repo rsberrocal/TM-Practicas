@@ -35,10 +35,12 @@ public class ImagePane extends GridPane implements Initializable {
     public String pathDir = "output/images/";
 
     public static Map<String, BufferedImage> imatgesMap = new HashMap<>();
+    public ArrayList<BufferedImage> imagesBuffered;
     public ArrayList<File> images;
 
     public void getDataFromZip() {
-        this.images = new ArrayList<File>();
+        this.images = new ArrayList<>();
+        this.imagesBuffered = new ArrayList<>();
         File dir = new File(pathDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -63,6 +65,9 @@ public class ImagePane extends GridPane implements Initializable {
                         fos.write(buffer, 0, len);
                     }
                     fos.close();
+                    Image image = new Image(newFile.toURI().toString());
+                    BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
+                    this.imagesBuffered.add(imatgeModi);
                     this.images.add(newFile);
                 } else {
                     System.out.println("Unzipping dir " + name);

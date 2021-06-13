@@ -5,7 +5,7 @@
  */
 public class DCT {
     private static final int N = 8; // Bloques de 8 x 8
-    private double[] c = new double[N];
+    private int[] c = new int[N];
     private static final double block = 8.0;
 
     public DCT() {
