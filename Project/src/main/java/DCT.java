@@ -16,7 +16,7 @@ public class DCT {
         for (int i = 1; i < N; i++) {
             c[i] = 1;
         }
-        c[0] = 1 / Math.sqrt(block);
+        c[0] = (int) (1 / Math.sqrt(block));
     }
 
     public int[][] applyDCT(int[][] f) {
