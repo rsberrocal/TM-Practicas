@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -24,9 +25,15 @@ public class Main extends Application {
     private ArrayList<BufferedImage> raw;
 
     public static boolean hasInput = false;
+    public static boolean hasEncode = false;
+    public static boolean hasDecode = false;
     public static boolean hasBinarisation = false;
     public static boolean hasNegative = false;
     public static boolean hasAveraging = false;
+
+    public static String output = "output.zip";
+
+    public static int FPS = 24;
 
     final static int WIDTH = 600;
     final static int HEIGHT = 400;
@@ -64,25 +71,40 @@ public class Main extends Application {
     }
 
     public void setInput() throws Exception {
+        // Calculamos el indice del parametro para encontrarlo
         int index = params.indexOf("-i");
+        // En caso de que no este, buscamos en su alternativa
         if (index == -1) {
             index = params.indexOf("--input");
         }
+        // Si no esta, mandamos error
         if (index == -1) {
             printError("--input es un parametro necesario.");
         }
+        // Buscamos el parametro
         int dataIdx = index + 1;
-        if (dataIdx > params.size() -1){
+        if (dataIdx > params.size() - 1) {
             printError("No se ha encotrado el parametro");
         }
-        System.out.println();
-        // Mirar si es un zip o no
-        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--") ){
+        // Miramos si el parametro es correcto
+        if (!params.get(dataIdx).contains("-") || !params.get(dataIdx).contains("--")) {
+            // Escogemos el valor
+            String data = params.get(dataIdx);
+            // Miramos si es un zip
+            if (isZip(data)) {
+                input = params.get(dataIdx);
+                hasInput = true;
+            } else {
+                printError("El parametro no es correcto");
+            }
+        } else {
             printError("El parametro no es correcto");
-        } else{
-            input = params.get(dataIdx);
-            hasInput = true;
         }
+    }
+
+    private boolean isZip(String zip) {
+        Pattern pattern = Pattern.compile(".*\\.zip$");
+        return pattern.matcher(zip).matches();
     }
 
     public void printError(String error) {
@@ -91,14 +113,26 @@ public class Main extends Application {
         System.exit(1);
     }
 
-    public void setOutput(){
-
+    public void setOutput() {
+        // Calculamos el indice del parametro para encontrarlo
+        int index = params.indexOf("-o");
+        // En caso de que no este, buscamos en su alternativa
+        if (index == -1) {
+            index = params.indexOf("--output");
+        }
+        // Buscamos el parametro
+        int dataIdx = index + 1;
+        if (dataIdx > params.size() - 1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            output = params.get(dataIdx);
+        }
     }
 
     // comentar
-    public static ArrayList<BufferedImage> extractArrayBImages(File zipFile) throws Exception{
+    public static ArrayList<BufferedImage> extractArrayBImages(File zipFile) throws Exception {
         ZipFile zip = null;
-        ArrayList <BufferedImage> images  = new ArrayList<>();
+        ArrayList<BufferedImage> images = new ArrayList<>();
         try {
             zip = new ZipFile(zipFile);
         } catch (ZipException ex) {
@@ -108,7 +142,7 @@ public class Main extends Application {
         }
 
         Enumeration<? extends ZipEntry> zipComponent = zip.entries();
-        while(zipComponent.hasMoreElements()){
+        while (zipComponent.hasMoreElements()) {
             ZipEntry next = zipComponent.nextElement();
             InputStream is = null;
             try {
@@ -135,13 +169,21 @@ public class Main extends Application {
         return images;
     }
 
-    public void setEncode(){
-        int index = params.indexOf("--encode");
+    public void setEncode() {
+        // Calculamos el indice del parametro para encontrarlo
+        int index = params.indexOf("-e");
+        // En caso de que no este, buscamos en su alternativa
+        if (index == -1) {
+            index = params.indexOf("--encode");
+        }
 
         if (index == -1) {
-            printError("--encode es un parametro necesario.");
+            printError("No se ha encotrado el parametro");
+        } else {
+            hasEncode = true;
         }
-        Scanner scan = new Scanner(System.in);
+
+        /*Scanner scan = new Scanner(System.in);
         System.out.println("Necesitamos estos parametros: ");
         System.out.println("GOP: ");
         short gop = scan.nextShort();
@@ -150,27 +192,68 @@ public class Main extends Application {
         System.out.println("Offset: ");
         short offset = scan.nextShort();
         System.out.println("Quality: ");
-        float quality = scan.nextFloat();
+        float quality = scan.nextFloat(); */
 
-        try{
+        /*try {
             File zip = new File(input);
             raw = this.extractArrayBImages(zip);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        Encoder codificado = new Encoder(raw, quality, gop, blockSize,offset);
-        codificado.encode();
+        Encoder codificado = new Encoder(raw, quality, gop, blockSize, offset);
+        codificado.encode();*/
     }
 
-    public void setDecode(){
-
+    public void setDecode() {
+        // Calculamos el indice del parametro para encontrarlo
+        int index = params.indexOf("-d");
+        // En caso de que no este, buscamos en su alternativa
+        if (index == -1) {
+            index = params.indexOf("--decode");
+        }
+        // Si no existe, damos error
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            hasDecode = true;
+        }
     }
 
-    public void setFPS(){
-
+    /**
+     * @param strNum Numero a comprobar
+     * @return True si es numero, False sino
+     */
+    public boolean isNumeric(String strNum) {
+        Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+        if (strNum == null) {
+            return false;
+        }
+        return pattern.matcher(strNum).matches();
     }
 
-    public void setBinarization(){
+    public void setFPS() {
+        // Calculamos el indice del parametro para encontrarlo
+        int index = params.indexOf("--fps");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                // check fps is int
+                String frames = params.get(dataIdx);
+                if (isNumeric(frames)) {
+                    FPS = Integer.parseInt(frames);
+                } else {
+                    printError("Parametro erroneo");
+                }
+            }
+        }
+    }
+
+    public void setBinarization() {
         // --binarization {value}
         // Filtro de binarizacion utilizando como threshold el valor indicado
         int index = params.indexOf("--binarization");
@@ -179,25 +262,25 @@ public class Main extends Application {
             printError("--binarization es un parametro necesario.");
         }
         int dataIdx = index + 1;
-        if (dataIdx > params.size() -1){
+        if (dataIdx > params.size() - 1) {
             printError("No se ha encotrado el parametro");
         }
         System.out.println();
         // Mirar si es un zip o no
-        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--") ){
+        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--")) {
             printError("El parametro no es correcto");
-        } else{
+        } else {
             binarisationValue = Integer.parseInt(params.get(dataIdx));
             hasBinarisation = true;
         }
 
     }
 
-    public void setNegative(){
+    public void setNegative() {
         this.hasNegative = true;
     }
 
-    public void setAveraging(){
+    public void setAveraging() {
         // --averaging {value}
         // Se aplica un filtro de mediana sobre zonas de value x value
         int index = params.indexOf("--averaging");
@@ -206,14 +289,14 @@ public class Main extends Application {
             printError("--averaging es un parametro necesario.");
         }
         int dataIdx = index + 1;
-        if (dataIdx > params.size() -1){
+        if (dataIdx > params.size() - 1) {
             printError("No se ha encotrado el parametro");
         }
         System.out.println();
         // Mirar si es un zip o no
-        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--") ){
+        if (params.get(dataIdx).contains("-") || params.get(dataIdx).contains("--")) {
             printError("El parametro no es correcto");
-        } else{
+        } else {
             avaragingValue = Integer.parseInt(params.get(dataIdx));
             hasAveraging = true;
         }
