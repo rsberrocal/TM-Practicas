@@ -24,6 +24,13 @@ public class Main extends Application {
     public List<String> params;
     private ArrayList<BufferedImage> raw;
 
+    /*
+        0 -> no encode, no decode
+        1 -> encode, no decode
+        2 -> no encode, decode
+        3 -> encode, decode
+     */
+    public static int status = 0;
     public static boolean hasInput = false;
     public static boolean hasEncode = false;
     public static boolean hasDecode = false;
@@ -182,26 +189,6 @@ public class Main extends Application {
         } else {
             hasEncode = true;
         }
-
-        /*Scanner scan = new Scanner(System.in);
-        System.out.println("Necesitamos estos parametros: ");
-        System.out.println("GOP: ");
-        short gop = scan.nextShort();
-        System.out.println("Patch size: ");
-        short blockSize = scan.nextShort();
-        System.out.println("Offset: ");
-        short offset = scan.nextShort();
-        System.out.println("Quality: ");
-        float quality = scan.nextFloat(); */
-
-        /*try {
-            File zip = new File(input);
-            raw = this.extractArrayBImages(zip);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Encoder codificado = new Encoder(raw, quality, gop, blockSize, offset);
-        codificado.encode();*/
     }
 
     public void setDecode() {
@@ -348,6 +335,13 @@ public class Main extends Application {
         if (params.contains("--averaging")) {
             setAveraging();
         }
+
+        if (hasEncode && !hasDecode)
+            status = 1;
+        if (!hasEncode && hasDecode)
+            status = 2;
+        if (hasEncode && hasDecode)
+            status = 3;
 
         // Faltaria poner el resto de parametros
 
