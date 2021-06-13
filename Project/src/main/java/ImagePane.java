@@ -94,17 +94,16 @@ public class ImagePane extends GridPane implements Initializable {
     public void showImages() {
         new Thread() {
             public void run() {
-                for (File img : images) {
+                changeFilterView();
+                for (BufferedImage img : imagesBuffered) {
                     Platform.runLater(() -> {
-                        Image image = new Image(img.toURI().toString());
-                        BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
-                        image = seleccioFiltres(imatgeModi);  // filtres aplicats
-                        changeFilterView();
-                        imageContainer.setImage(image);
+
+                        imageContainer.setImage(SwingFXUtils.toFXImage(img, null ));
 
                     });
                     try {
-                        Thread.sleep(400);
+                        int pepe = 1000 / Main.FPS;
+                        Thread.sleep(pepe);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -135,7 +134,7 @@ public class ImagePane extends GridPane implements Initializable {
 
     }
 
-    public Image seleccioFiltres(BufferedImage a) {
+    public BufferedImage seleccioFiltres(BufferedImage a) {
         if (Main.hasBinarisation) {
             a = filtreBinarisation(a, Main.binarisationValue);
         }
@@ -146,9 +145,7 @@ public class ImagePane extends GridPane implements Initializable {
             a = filtreNegatiu(a);
         }
 
-        Image image = SwingFXUtils.toFXImage(a, null); // converteix en image
-
-        return image;
+        return a;
     }
 
     public BufferedImage filtreNegatiu(BufferedImage imatge) {
@@ -248,14 +245,19 @@ public class ImagePane extends GridPane implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         inputTxt.setText(Main.input);
         getDataFromZip();
-        // check bools
-        if (Main.hasEncode){
+
+        if (Main.status == 0){  //NO ENCODE NO DECODE
+            for(int i = 0; i< imagesBuffered.size();i++){
+                this.imagesBuffered.set(i,this.seleccioFiltres(imagesBuffered.get(i)));
+            }
+        }else if(Main.status == 1){  //SI ENCODE NO DECODE
+
+        }else if(Main.status == 2){  //NO ENCODE SI DECODE
+
+        }else if(Main.status == 3){  //SI ENCODE SI DECODE
 
         }
 
-        if (Main.hasDecode){
-
-        }
         showImages();
         System.out.println(Main.input);
     }

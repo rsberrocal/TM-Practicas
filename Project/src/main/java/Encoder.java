@@ -245,6 +245,8 @@ public class Encoder {
     /*
     -----------------------------------------------------------------------------------------------------------
      */
+    /*
+
     public static void encode(BufferedImage input) {
         short matches;
         ArrayList<int[]> coords;
@@ -291,6 +293,7 @@ public class Encoder {
                 Once we have computed matches, we can update it directly */
 
                 //template-matching for each block of IFRAME into PFRAME
+    /*
                 for (int h = 0; h < iframe.length; h++) {
                     //System.out.println("\t\t@debug tenplate matching iteration "+ h );
                     if (templateMatching(h, iframe[h], pframe, coords)) matches++;
@@ -337,5 +340,5 @@ public class Encoder {
 
     }
 
-
+*/
 }
