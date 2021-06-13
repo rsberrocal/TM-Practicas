@@ -92,13 +92,15 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void showImages() {
+
         new Thread() {
             public void run() {
                 changeFilterView();
-                for (BufferedImage img : imagesBuffered) {
+                for (int i = 0; i<imagesBuffered.size();i++) {
+                    int finalI = i;
                     Platform.runLater(() -> {
 
-                        imageContainer.setImage(SwingFXUtils.toFXImage(img, null ));
+                        imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null ));
 
                     });
                     try {
@@ -106,6 +108,9 @@ public class ImagePane extends GridPane implements Initializable {
                         Thread.sleep(pepe);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    }
+                    if (i==imagesBuffered.size()-1){
+                        i = 0;                          // aixo fa que no pari
                     }
                 }
             }

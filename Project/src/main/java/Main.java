@@ -332,8 +332,24 @@ public class Main extends Application {
             setNegative();
         }
 
-        if (params.contains("--averaging")) {
-            setAveraging();
+        if (params.contains("--nTiles")) {
+            //setNTiles();
+        }
+
+        if (params.contains("--seekRange")) {
+            //setSeekRange();
+        }
+
+        if (params.contains("--GOP")) {
+            //setGop();
+        }
+
+        if (params.contains("--quality")) {
+            //setQuality();
+        }
+
+        if (params.contains("--batch")|| params.contains("-b")) {
+            //setBatch();
         }
 
         if (hasEncode && !hasDecode)
