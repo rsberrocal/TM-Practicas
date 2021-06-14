@@ -37,10 +37,13 @@ public class Main extends Application {
     public static boolean hasBinarisation = false;
     public static boolean hasNegative = false;
     public static boolean hasAveraging = false;
-
+    public static boolean hasEdgeDetection = false;
+    public static boolean hasSaturation = false;
+    public static boolean hasBatch = false;
     public static String output = "output.zip";
 
     public static int FPS = 24;
+    public static int EDGEDETECTH = 0;
 
     final static int WIDTH = 600;
     final static int HEIGHT = 400;
@@ -64,6 +67,10 @@ public class Main extends Application {
         System.out.println("Se aplicara el filtro negativo sobre la imagen");
         System.out.println("--averaging {value}");
         System.out.println("Se aplica un filtro de mediana sobre zonas de value x value");
+        System.out.println("--edgeDetection {value}");
+        System.out.println("Se aplica un filtro de detección de esquinas con un threshold (value)");
+        System.out.println("--saturacion");
+        System.out.println("Se aplica un filtro de saturación");
         System.out.println("--nTiles {value}");
         System.out.println("Numero de teselas en la cual dividir la imagen.");
         System.out.println("--seekRange {value}");
@@ -233,6 +240,7 @@ public class Main extends Application {
                 String frames = params.get(dataIdx);
                 if (isNumeric(frames)) {
                     FPS = Integer.parseInt(frames);
+                    System.out.println("Fps maximos: "+FPS);
                 } else {
                     printError("Parametro erroneo");
                 }
@@ -259,12 +267,14 @@ public class Main extends Application {
         } else {
             binarisationValue = Integer.parseInt(params.get(dataIdx));
             hasBinarisation = true;
+            System.out.println("Se esta aplicando el filtro Binarisation");
         }
 
     }
 
     public void setNegative() {
         this.hasNegative = true;
+        System.out.println("Se esta aplicando el filtro Negativo");
     }
 
     public void setAveraging() {
@@ -286,7 +296,41 @@ public class Main extends Application {
         } else {
             avaragingValue = Integer.parseInt(params.get(dataIdx));
             hasAveraging = true;
+            System.out.println("Se esta aplicando el filtro Averaging");
         }
+    }
+
+    private void setEdgeDetection() {
+        int index = params.indexOf("--edgeDetection");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                String threshold = params.get(dataIdx);
+                if (isNumeric(threshold)) {
+                    EDGEDETECTH = Integer.parseInt(threshold);
+                    hasEdgeDetection = true;
+                    System.out.println("Se esta aplicando el filtro de detección de esquinas");
+                } else {
+                    printError("Parametro erroneo");
+
+                }
+            }
+        }
+    }
+
+    private void setSaturation() {
+        hasSaturation = true;
+        System.out.println("Se esta aplicando el filtro de saturación");
+    }
+
+    private void setBatch() {
+        hasBatch = true;
+        System.out.println("No se mostrará ningun resultado (--batch/-b)");
     }
 
     @Override
@@ -328,8 +372,20 @@ public class Main extends Application {
             setBinarization();
         }
 
+        if (params.contains("--edgeDetection")) {
+            setEdgeDetection();
+        }
+
+        if (params.contains("--saturacion")) {
+            setSaturation();
+        }
+
         if (params.contains("--negative")) {
             setNegative();
+        }
+
+        if (params.contains("--averaging")) {
+            setAveraging();
         }
 
         if (params.contains("--nTiles")) {
@@ -349,7 +405,7 @@ public class Main extends Application {
         }
 
         if (params.contains("--batch")|| params.contains("-b")) {
-            //setBatch();
+            setBatch();
         }
 
         if (hasEncode && !hasDecode)
@@ -363,6 +419,9 @@ public class Main extends Application {
 
         initApp(primaryStage);
     }
+
+
+
 
     public void initApp(Stage primaryStage) throws Exception {
 

@@ -7,6 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -51,10 +53,11 @@ public class ImagePane extends GridPane implements Initializable {
             ZipEntry zipEntry = zis.getNextEntry();
             //buffer for read and write data to file
             byte[] buffer = new byte[1024];
+            System.out.println("Inicio de Unzipping");
             while (zipEntry != null) {
                 String name = zipEntry.getName();
                 if (!zipEntry.isDirectory()) {
-                    System.out.println("Unzipping " + name);
+                    //System.out.println("Unzipping " + name);
                     File newFile = new File(pathDir + File.separator + name);
                     //create directories for sub directories in zip
                     new File(newFile.getParent()).mkdirs();
@@ -82,6 +85,7 @@ public class ImagePane extends GridPane implements Initializable {
             zis.closeEntry();
             zis.close();
             fis.close();
+            System.out.println("Final Unzipping");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,31 +96,33 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void showImages() {
+        if(!Main.hasBatch){
+            new Thread() {
+                public void run() {
+                    changeFilterView();
+                    for (int i = 0; i<imagesBuffered.size();i++) {
+                        int finalI = i;
+                        Platform.runLater(() -> {
 
-        new Thread() {
-            public void run() {
-                changeFilterView();
-                for (int i = 0; i<imagesBuffered.size();i++) {
-                    int finalI = i;
-                    Platform.runLater(() -> {
+                            imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null ));
 
-                        imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null ));
-
-                    });
-                    try {
-                        int pepe = 1000 / Main.FPS;
-                        Thread.sleep(pepe);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (i==imagesBuffered.size()-1){
-                        i = 0;                          // aixo fa que no pari
+                        });
+                        try {
+                            int pepe = 1000 / Main.FPS;
+                            Thread.sleep(pepe);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        if (i==imagesBuffered.size()-1){
+                            i = 0;                          // aixo fa que no pari
+                        }
                     }
                 }
-            }
-        }.start();
-        // System.out.println(images.get(0).getName());
-
+            }.start();
+            // System.out.println(images.get(0).getName());
+        }else{
+            System.exit(0);
+        }
     }
 
     public void changeFilterView() {
@@ -140,6 +146,9 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public BufferedImage seleccioFiltres(BufferedImage a) {
+        if(Main.hasEdgeDetection){
+            a = filtreEdgeDetection(a, Main.EDGEDETECTH);
+        }
         if (Main.hasBinarisation) {
             a = filtreBinarisation(a, Main.binarisationValue);
         }
@@ -148,6 +157,8 @@ public class ImagePane extends GridPane implements Initializable {
         }
         if (Main.hasNegative) {
             a = filtreNegatiu(a);
+        }if(Main.hasSaturation){
+            //a = filtreSaturation(a);
         }
 
         return a;
@@ -243,6 +254,41 @@ public class ImagePane extends GridPane implements Initializable {
         //Create the binarized image and return it
         BufferedImage result = new BufferedImage(imatge.getColorModel(), tesela, imatge.isAlphaPremultiplied(), null);
         return result;
+    }
+
+    public static int truncate(int a) {
+        if      (a <   0) return 0;
+        else if (a > 255) return 255;
+        else              return a;
+    }
+
+
+    public BufferedImage filtreEdgeDetection(BufferedImage a, int edgeDist) {
+        Color white = new Color(255,255,255);
+        Color black = new Color(0,0,0);
+
+        Color topPixel = null;
+        Color lowerPixel = null;
+
+        double topIntensity;
+        double lowerIntensity;
+
+        for(int y = 0; y < a.getHeight()-1; y++){
+            for(int x = 0; x < a.getWidth(); x++){
+
+                topPixel = new Color(a.getRGB(x,y));
+                lowerPixel = new Color(a.getRGB(x,y+1));
+
+                topIntensity =  (topPixel.getRed() + topPixel.getGreen() + topPixel.getBlue()) / 3;
+                lowerIntensity =  (lowerPixel.getRed() + lowerPixel.getGreen() + lowerPixel.getBlue()) / 3;
+
+                if(Math.abs(topIntensity - lowerIntensity) < edgeDist)
+                    a.setRGB(x,y, white.getRGB());
+                else
+                    a.setRGB(x,y, black.getRGB());
+            }
+        }
+        return a;
     }
 
 
