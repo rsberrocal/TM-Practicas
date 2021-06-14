@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
+import org.javatuples.Triplet;
 
 public class Encoder {
     public final static String BUILDER_FNAME = "builder_skeleton.gz";
@@ -32,22 +33,20 @@ public class Encoder {
         this.offset = offset;
     }
 
-    private BufferedImage[] chunkFrame(BufferedImage frame) {
-        int chunks = rows * cols;
+    private static ArrayList<Triplet<BufferedImage, Integer, Integer>> getTiles(BufferedImage image, int blockSizeX, int blockSizeY) {
+        int tiles = (image.getHeight() / blockSizeY) * (image.getWidth() / blockSizeX); // get num of tiles
         int count = 0;
-
-        BufferedImage imgs[] = new BufferedImage[chunks]; //Image array to hold image chunks
-        for (int y = 0; y < frame.getHeight(); y += this.brick) {
-            for (int x = 0; x < frame.getWidth(); x += this.brick) {
-                imgs[count] = frame.getSubimage(x, y, this.brick, this.brick);
-                count++;
-
+        ArrayList<Triplet<BufferedImage, Integer, Integer>> res = new ArrayList<>();
+        for (int y = 0; y < image.getHeight(); y += blockSizeY) {
+            for (int x = 0; x < image.getWidth(); x += blockSizeX) {
+                // Get every tile and saved it as bufferedImage
+                res.add(Triplet.with(image.getSubimage(x, y, blockSizeX, blockSizeY), x, y));
             }
         }
-        return imgs;
+        return res;
     }
 
-    private double compareImages(BufferedImage im1, BufferedImage im2) {
+    private static double compareImages(BufferedImage im1, BufferedImage im2) {
         assert (im1.getHeight() == im2.getHeight() && im1.getWidth() == im2.getWidth());
         double variation = 0.0;
         for (int y = 0; y < im1.getHeight(); y++) {
@@ -58,7 +57,7 @@ public class Encoder {
         return variation / (im1.getWidth() * im1.getHeight());
     }
 
-    private double compareARGB(int rgb1, int rgb2) {
+    private static double compareARGB(int rgb1, int rgb2) {
         double r1 = ((rgb1 >> 16) & 0xFF) / 255.0;
         double r2 = ((rgb2 >> 16) & 0xFF) / 255.0;
         double g1 = ((rgb1 >> 8) & 0xFF) / 255.0;
@@ -86,19 +85,24 @@ public class Encoder {
         // guardar en zip
     }
 
-    private double meanValue(BufferedImage image) {
-        Raster raster = image.getRaster();
-        double sum = 0.0;
+    private static Color meanValue(BufferedImage image) {
+        int r = 0, g = 0, b = 0;
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) {
+                Color pix = new Color(image.getRGB(i, j));
+                r += pix.getRed();
+                g += pix.getGreen();
+                b += pix.getBlue();
+            }
+        }
+        r = r / (image.getWidth() * image.getHeight());
+        g = g / (image.getWidth() * image.getHeight());
+        b = b / (image.getWidth() * image.getHeight());
 
-        for (int y = 0; y < image.getHeight(); ++y)
-            for (int x = 0; x < image.getWidth(); ++x)
-                sum += raster.getSample(x, y, 0);
-
-        return sum / (image.getWidth() * image.getHeight());
+        return new Color(r, g, b);
     }
 
-    private boolean templateMatching(int h, BufferedImage template, BufferedImage pframe,
-                                     ArrayList<int[]> coords) {
+    private boolean templateMatching(int h, BufferedImage template, BufferedImage pframe, ArrayList<int[]> coords) {
 
         int xmin, xmax, ymin, ymax;
         ymin = (h % rows) * brick - offset;
@@ -207,33 +211,35 @@ public class Encoder {
         return ret;
     }
 
-    public static void encode(BufferedImage input,int seekRange) {
+    public static boolean matchTile(BufferedImage tile1, BufferedImage tile2, float quality) {
+        return compareImages(tile1, tile2) > quality;
+    }
+
+    public static BufferedImage encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, int quality) {
         System.out.println("Encoding image");
-        short matches;
-        ArrayList<int[]> coords;
-        BufferedImage[] iframe = null;
-        DCT dct =  new DCT();// class to do the operation
+        boolean found = false;
+        ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesInput = getTiles(input, blockSizeX, blockSizeY);
+        ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesCompare = getTiles(imageCompare, blockSizeX, blockSizeY);
 
+        BufferedImage result = input;
 
-        int width = input.getWidth();
-        int height = input.getHeight();
-        // tiles are 8x8
-        for (int i = 0; i < height; i += blockSize) {
-            for (int j = 0; j < width; j += blockSize) {
-                // Create tiles
-                BufferedImage tile = input.getSubimage(i, j, blockSize, blockSize);
-                int[][] aux = new int[blockSize][blockSize];
-                // Get info
-                for (int x = 0; x < tile.getWidth(); x++) {
-                    for (int y = 0; y < tile.getHeight(); y++) {
-                        aux[x][y] = tile.getRGB(x, y);
+        for (Triplet<BufferedImage, Integer, Integer> tileInput : tilesInput) {
+            for (Triplet<BufferedImage, Integer, Integer> tileCompare : tilesCompare) {
+                if (compareImages(tileInput.getValue0(), tileCompare.getValue0()) < quality) {
+                    for (int i = tileInput.getValue1(); i < tileInput.getValue1() + blockSizeX; i++){
+                        for (int j = tileInput.getValue2(); i < tileInput.getValue2() + blockSizeY; i++){
+                            result.setRGB(i, j, meanValue(tileInput.getValue0()).getRGB());
+                        }
                     }
+                    found = true;
+                    break;
                 }
-                // calculate DCT
-                aux = dct.applyDCT(aux);
-
-
+            }
+            if (found){
+                break;
             }
         }
+
+        return result;
     }
 }
