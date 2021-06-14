@@ -29,10 +29,19 @@ public class ImagePane extends GridPane implements Initializable {
     public CheckBox negativeCheck;
 
     @FXML
+    public CheckBox saturationCheck;
+
+    @FXML
     public Label binaritzationValue;
 
     @FXML
     public Label averagingValue;
+
+    @FXML
+    public Label edgDValue;
+
+    @FXML
+    public Label fpsValue;
 
     public String pathDir = "output/images/";
 
@@ -128,6 +137,10 @@ public class ImagePane extends GridPane implements Initializable {
     public void changeFilterView() {
         negativeCheck.setSelected(Main.hasNegative);
         negativeCheck.setDisable(true);
+        saturationCheck.setSelected(Main.hasSaturation);
+        saturationCheck.setDisable(true);
+        fpsValue.setText(String.valueOf(Main.FPS));
+        edgDValue.setText(String.valueOf(Main.EDGEDETECTH));
         binaritzationValue.setText(String.valueOf(Main.binarisationValue));
         averagingValue.setText(String.valueOf(Main.avaragingValue));
     }

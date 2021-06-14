@@ -26,7 +26,7 @@
                   <CheckBox layoutX="532.0" layoutY="34.0" mnemonicParsing="false" />
                   <CheckBox layoutX="532.0" layoutY="53.0" mnemonicParsing="false" />
                   <CheckBox fx:id="negativeCheck" layoutX="532.0" layoutY="119.0" mnemonicParsing="false" />
-                  <Label alignment="BASELINE_RIGHT" contentDisplay="TEXT_ONLY" layoutX="439.0" layoutY="72.0" prefHeight="17.0" prefWidth="110.0" text="0" textAlignment="RIGHT" />
+                  <Label fx:id="fpsValue" alignment="BASELINE_RIGHT" contentDisplay="TEXT_ONLY" layoutX="439.0" layoutY="72.0" prefHeight="17.0" prefWidth="110.0" text="0" textAlignment="RIGHT" />
                   <Label layoutX="402.0" layoutY="97.0" prefHeight="17.0" prefWidth="69.0" text="binarization" />
                   <Label fx:id="binaritzationValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="97.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
                   <Label layoutX="402.0" layoutY="119.0" prefHeight="17.0" prefWidth="69.0" text="negative" />
@@ -42,8 +42,8 @@
                   <CheckBox fx:id="saturationCheck" layoutX="532.0" layoutY="136.0" mnemonicParsing="false" />
                   <Label layoutX="402.0" layoutY="136.0" prefHeight="17.0" prefWidth="69.0" text="saturation" />
                   <Label fx:id="averagingValue1" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="190.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="154.0" prefHeight="17.0" prefWidth="120.0" text="edge detection value" />
-                  <Label fx:id="averagingValue2" alignment="BASELINE_RIGHT" layoutX="525.0" layoutY="154.0" prefHeight="17.0" prefWidth="23.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="154.0" prefHeight="17.0" prefWidth="120.0" text="Edge Detection TH" />
+                  <Label fx:id="edgDValue" alignment="BASELINE_RIGHT" layoutX="525.0" layoutY="154.0" prefHeight="17.0" prefWidth="23.0" text="0" textAlignment="RIGHT" />
                </children>
             </Pane>
          </children>
