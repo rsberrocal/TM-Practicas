@@ -133,24 +133,32 @@ public class ImagePane extends GridPane implements Initializable {
         }
     }
 
-    private static String getFileNameWithoutExtension(File file) {
+    /**
+     * Return file name without extension
+     *
+     * @param file file to get name
+     * @return name without extension
+     */
+    private static String getName(File file) {
         String fileName = "";
         try {
-            if (file != null && file.exists()) {
-                String name = file.getName();
-                fileName = name.replaceFirst("[.][^.]+$", "");
+            if (file != null && file.exists()) {// See if file exists
+                String name = file.getName();// Get name
+                fileName = name.replaceFirst("[.][^.]+$", ""); // Remove the extension
             }
         } catch (Exception e) {
             e.printStackTrace();
             fileName = "";
         }
-
         return fileName;
-
     }
 
+    /**
+     * Save all the image in a zip
+     */
     public void saveOnZip() {
-        // FileOutputStream fos = new FileOutputStream("");
+        // Create zip with output
+        long startZip = System.currentTimeMillis();
         File newZip = new File(Main.output);
         try {
             FileOutputStream fos = new FileOutputStream(newZip);
@@ -159,26 +167,31 @@ public class ImagePane extends GridPane implements Initializable {
             System.out.println("Saving on zip... " + Main.output);
             int i = 0;
             for (BufferedImage img : imagesBuffered) {
-                ZipEntry entry = new ZipEntry(getFileNameWithoutExtension(images.get(i)) + ".jpeg");
+                String name = getName(images.get(i)) + ".jpeg";
+                ZipEntry entry = new ZipEntry(name);
                 zipOutputStream.putNextEntry(entry);
                 ImageIO.write(img, "jpeg", zipOutputStream);
-                System.out.println("Image: " + getFileNameWithoutExtension(images.get(i)) + ".jpeg saved");
                 i++;
             }
             zipOutputStream.finish();
             zipOutputStream.close();
-            System.out.println("All saved");
+            long endZip = System.currentTimeMillis() - startZip;
+            System.out.println("All saved at " + endZip + "ms");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
+    /**
+     * Show all the images on imagesBuffered.
+     * If batch mode is selected we just stop the program.
+     */
     public void showImages() {
         if (!Main.hasBatch) {
             new Thread() {
                 public void run() {
-                    changeFilterView();
+                    // Iterate over all the images and show it
                     for (int i = 0; i < imagesBuffered.size(); i++) {
                         int finalI = i;
                         Platform.runLater(() -> {
@@ -198,7 +211,6 @@ public class ImagePane extends GridPane implements Initializable {
                     }
                 }
             }.start();
-            // System.out.println(images.get(0).getName());
         } else {
             System.exit(0);
         }
@@ -233,6 +245,7 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void doEncode() {
+        long startEncode = System.currentTimeMillis();
         int aux = Main.GOP;
         for (int i = 0; i < imagesBuffered.size(); i++) {
             if (aux == Main.GOP) {
@@ -242,6 +255,25 @@ public class ImagePane extends GridPane implements Initializable {
                 aux++;
             }
         }
+        long endEncode = System.currentTimeMillis() - startEncode;
+        System.out.println("Encoded all at " + endEncode + " ms");
+    }
+
+    public void doDecode() {
+        long startDecode = System.currentTimeMillis();
+        int aux = Main.GOP;
+        int num = 0;
+        for (int i = 0; i < imagesBuffered.size(); i++) {
+            if
+            if (aux == Main.GOP) {
+                aux = 1;
+            } else {
+                imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
+                aux++;
+            }
+        }
+        long endDecode = System.currentTimeMillis() - startDecode;
+        System.out.println("Encoded all at " + endDecode + " ms");
     }
 
     public BufferedImage seleccioFiltres(BufferedImage a) {
@@ -256,7 +288,8 @@ public class ImagePane extends GridPane implements Initializable {
         }
         if (Main.hasNegative) {
             a = filtreNegatiu(a);
-        }if(Main.hasSaturation){
+        }
+        if (Main.hasSaturation) {
             a = filtresaturacio(a, Main.SATVALUE);
         }
 
@@ -445,9 +478,10 @@ public class ImagePane extends GridPane implements Initializable {
         } else if (Main.status == 2) {  //NO ENCODE SI DECODE
 
         } else if (Main.status == 3) {  //SI ENCODE SI DECODE
-
+            setFilters();
+            doEncode();
         }
-
+        changeFilterView();
         showImages();
         saveOnZip();
         System.out.println(Main.input);
