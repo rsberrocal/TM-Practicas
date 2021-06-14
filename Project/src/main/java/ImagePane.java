@@ -268,14 +268,7 @@ public class ImagePane extends GridPane implements Initializable {
         BufferedImage result = new BufferedImage(imatge.getColorModel(), tesela, imatge.isAlphaPremultiplied(), null);
         return result;
     }
-
-    public static int truncate(int a) {
-        if      (a <   0) return 0;
-        else if (a > 255) return 255;
-        else              return a;
-    }
-
-
+    
     public BufferedImage filtreEdgeDetection(BufferedImage a, int edgeDist) {
         Color white = new Color(255,255,255);
         Color black = new Color(0,0,0);
@@ -295,10 +288,11 @@ public class ImagePane extends GridPane implements Initializable {
                 topIntensity =  (topPixel.getRed() + topPixel.getGreen() + topPixel.getBlue()) / 3;
                 lowerIntensity =  (lowerPixel.getRed() + lowerPixel.getGreen() + lowerPixel.getBlue()) / 3;
 
-                if(Math.abs(topIntensity - lowerIntensity) < edgeDist)
+                if(Math.abs(topIntensity - lowerIntensity) < edgeDist){
                     a.setRGB(x,y, white.getRGB());
-                else
+                }else{
                     a.setRGB(x,y, black.getRGB());
+                }
             }
         }
         return a;
