@@ -215,7 +215,7 @@ public class Encoder {
         return compareImages(tile1, tile2) > quality;
     }
 
-    public static BufferedImage encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, int quality) {
+    public static BufferedImage encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, double quality) {
         System.out.println("Encoding image");
         boolean found = false;
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesInput = getTiles(input, blockSizeX, blockSizeY);
@@ -225,6 +225,7 @@ public class Encoder {
 
         for (Triplet<BufferedImage, Integer, Integer> tileInput : tilesInput) {
             for (Triplet<BufferedImage, Integer, Integer> tileCompare : tilesCompare) {
+                double comp = compareImages(tileInput.getValue0(), tileCompare.getValue0());
                 if (compareImages(tileInput.getValue0(), tileCompare.getValue0()) < quality) {
                     for (int i = tileInput.getValue1(); i < tileInput.getValue1() + blockSizeX; i++){
                         for (int j = tileInput.getValue2(); i < tileInput.getValue2() + blockSizeY; i++){

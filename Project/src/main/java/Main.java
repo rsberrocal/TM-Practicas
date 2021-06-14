@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import javafx.application.Platform;
 
 public class Main extends Application {
 
@@ -545,6 +546,11 @@ public class Main extends Application {
         // GridPane pane = loader.load();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
+        //this makes all stages close and the app exit when the main stage is closed
+        primaryStage.setOnCloseRequest(e -> {
+            System.out.println("exit");
+            System.exit(0);
+        });
         primaryStage.setTitle("TITULO");
         primaryStage.show();
     }

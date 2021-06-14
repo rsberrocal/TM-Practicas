@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -17,6 +18,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class ImagePane extends GridPane implements Initializable {
     @FXML
@@ -131,20 +133,57 @@ public class ImagePane extends GridPane implements Initializable {
         }
     }
 
+    private static String getFileNameWithoutExtension(File file) {
+        String fileName = "";
+        try {
+            if (file != null && file.exists()) {
+                String name = file.getName();
+                fileName = name.replaceFirst("[.][^.]+$", "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = "";
+        }
+
+        return fileName;
+
+    }
+
     public void saveOnZip() {
         // FileOutputStream fos = new FileOutputStream("");
+        File newZip = new File(Main.output);
+        try {
+            FileOutputStream fos = new FileOutputStream(newZip);
+            ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
+
+            System.out.println("Saving on zip... " + Main.output);
+            int i = 0;
+            for (BufferedImage img : imagesBuffered) {
+                ZipEntry entry = new ZipEntry(getFileNameWithoutExtension(images.get(i)) + ".jpeg");
+                zipOutputStream.putNextEntry(entry);
+                ImageIO.write(img, "jpeg", zipOutputStream);
+                System.out.println("Image: " + getFileNameWithoutExtension(images.get(i)) + ".jpeg saved");
+                i++;
+            }
+            zipOutputStream.finish();
+            zipOutputStream.close();
+            System.out.println("All saved");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void showImages() {
-        if(!Main.hasBatch){
+        if (!Main.hasBatch) {
             new Thread() {
                 public void run() {
                     changeFilterView();
-                    for (int i = 0; i<imagesBuffered.size();i++) {
+                    for (int i = 0; i < imagesBuffered.size(); i++) {
                         int finalI = i;
                         Platform.runLater(() -> {
 
-                            imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null ));
+                            imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null));
 
                         });
                         try {
@@ -153,14 +192,14 @@ public class ImagePane extends GridPane implements Initializable {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        if (i==imagesBuffered.size()-1){
+                        if (i == imagesBuffered.size() - 1) {
                             i = 0;                          // aixo fa que no pari
                         }
                     }
                 }
             }.start();
             // System.out.println(images.get(0).getName());
-        }else{
+        } else {
             System.exit(0);
         }
     }
@@ -189,23 +228,24 @@ public class ImagePane extends GridPane implements Initializable {
         edgDValue.setText(String.valueOf(Main.EDGEDETECTH));
         averagingValue.setText(String.valueOf(Main.avaragingValue));
         fpsValue.setText(String.valueOf(Main.FPS));
+        encodeCheck.setSelected(Main.hasEncode);
+        decodeCheck.setSelected(Main.hasDecode);
     }
 
     public void doEncode() {
-        // 1. read images is done before
-        // 2. make filters
-        // 3. convert images to JPEG if they are not,
-        for (BufferedImage img : imagesBuffered) {
-            //Image image = new Image(img.toURI().toString());
-            //BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
-            // need to encodeEncoder.
-            // encode ( img)
+        int aux = Main.GOP;
+        for (int i = 0; i < imagesBuffered.size(); i++) {
+            if (aux == Main.GOP) {
+                aux = 1;
+            } else {
+                imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
+                aux++;
+            }
         }
-
     }
 
     public BufferedImage seleccioFiltres(BufferedImage a) {
-        if(Main.hasEdgeDetection){
+        if (Main.hasEdgeDetection) {
             a = filtreEdgeDetection(a, Main.EDGEDETECTH);
         }
         if (Main.hasBinarisation) {
@@ -316,8 +356,8 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public BufferedImage filtreEdgeDetection(BufferedImage a, int edgeDist) {
-        Color white = new Color(255,255,255);
-        Color black = new Color(0,0,0);
+        Color white = new Color(255, 255, 255);
+        Color black = new Color(0, 0, 0);
 
         Color topPixel = null;
         Color lowerPixel = null;
@@ -325,19 +365,19 @@ public class ImagePane extends GridPane implements Initializable {
         double topIntensity;
         double lowerIntensity;
 
-        for(int y = 0; y < a.getHeight()-1; y++){
-            for(int x = 0; x < a.getWidth(); x++){
+        for (int y = 0; y < a.getHeight() - 1; y++) {
+            for (int x = 0; x < a.getWidth(); x++) {
 
-                topPixel = new Color(a.getRGB(x,y));
-                lowerPixel = new Color(a.getRGB(x,y+1));
+                topPixel = new Color(a.getRGB(x, y));
+                lowerPixel = new Color(a.getRGB(x, y + 1));
 
-                topIntensity =  (topPixel.getRed() + topPixel.getGreen() + topPixel.getBlue()) / 3;
-                lowerIntensity =  (lowerPixel.getRed() + lowerPixel.getGreen() + lowerPixel.getBlue()) / 3;
+                topIntensity = (topPixel.getRed() + topPixel.getGreen() + topPixel.getBlue()) / 3;
+                lowerIntensity = (lowerPixel.getRed() + lowerPixel.getGreen() + lowerPixel.getBlue()) / 3;
 
-                if(Math.abs(topIntensity - lowerIntensity) < edgeDist){
-                    a.setRGB(x,y, white.getRGB());
-                }else{
-                    a.setRGB(x,y, black.getRGB());
+                if (Math.abs(topIntensity - lowerIntensity) < edgeDist) {
+                    a.setRGB(x, y, white.getRGB());
+                } else {
+                    a.setRGB(x, y, black.getRGB());
                 }
             }
         }
@@ -386,25 +426,30 @@ public class ImagePane extends GridPane implements Initializable {
         return imatge;
     }
 
+    private void setFilters() {
+        for (int i = 0; i < imagesBuffered.size(); i++) {
+            this.imagesBuffered.set(i, this.seleccioFiltres(imagesBuffered.get(i)));
+        }
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         inputTxt.setText(Main.input);
         getDataFromZip();
 
-        if (Main.status == 0){  //NO ENCODE NO DECODE
-            for(int i = 0; i< imagesBuffered.size();i++){
-                this.imagesBuffered.set(i,this.seleccioFiltres(imagesBuffered.get(i)));
-            }
-        }else if(Main.status == 1){  //SI ENCODE NO DECODE
+        if (Main.status == 0) {  //NO ENCODE NO DECODE
+            setFilters();
+        } else if (Main.status == 1) {  //SI ENCODE NO DECODE
+            setFilters();
+            doEncode();
+        } else if (Main.status == 2) {  //NO ENCODE SI DECODE
 
-        }else if(Main.status == 2){  //NO ENCODE SI DECODE
-
-        }else if(Main.status == 3){  //SI ENCODE SI DECODE
+        } else if (Main.status == 3) {  //SI ENCODE SI DECODE
 
         }
 
         showImages();
+        saveOnZip();
         System.out.println(Main.input);
     }
 }
