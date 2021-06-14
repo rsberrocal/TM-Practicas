@@ -8,9 +8,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
-import org.xeustechnologies.jtar.TarEntry;
-import org.xeustechnologies.jtar.TarOutputStream;
-
 public class Encoder {
     public final static String BUILDER_FNAME = "builder_skeleton.gz";
     public final static String VIDEO_FNAME = "video.zip";
@@ -210,135 +207,33 @@ public class Encoder {
         return ret;
     }
 
-    private void tar(File[] filesToTar) throws FileNotFoundException {
-        // Output file stream
-        FileOutputStream dest = new FileOutputStream(COMPRESSED_FNAME);
-
-        // Create a TarOutputStream
-        TarOutputStream out = new TarOutputStream(new BufferedOutputStream(dest));
-        try {
-            for (File f : filesToTar) {
-                out.putNextEntry(new TarEntry(f, f.getName()));
-                BufferedInputStream origin = new BufferedInputStream(new FileInputStream(f));
-
-                int count;
-                byte data[] = new byte[2048];
-                while ((count = origin.read(data)) != -1) {
-                    out.write(data, 0, count);
-                }
-
-                out.flush();
-                origin.close();
-                f.delete();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    /*
-    -----------------------------------------------------------------------------------------------------------
-     */
-    /*
-
-    public static void encode(BufferedImage input) {
+    public static void encode(BufferedImage input,int seekRange) {
+        System.out.println("Encoding image");
         short matches;
         ArrayList<int[]> coords;
         BufferedImage[] iframe = null;
+        DCT dct =  new DCT();// class to do the operation
+
 
         int width = input.getWidth();
         int height = input.getHeight();
         // tiles are 8x8
         for (int i = 0; i < height; i += blockSize) {
             for (int j = 0; j < width; j += blockSize) {
+                // Create tiles
                 BufferedImage tile = input.getSubimage(i, j, blockSize, blockSize);
-                tile.get
+                int[][] aux = new int[blockSize][blockSize];
+                // Get info
+                for (int x = 0; x < tile.getWidth(); x++) {
+                    for (int y = 0; y < tile.getHeight(); y++) {
+                        aux[x][y] = tile.getRGB(x, y);
+                    }
+                }
+                // calculate DCT
+                aux = dct.applyDCT(aux);
+
+
             }
         }
-
-        this.builder = new ArrayList();
-        // save builder skeleton header:
-        this.builder.add((byte) (this.brick & 0xff));
-        this.builder.add((byte) (this.gop & 0xff));
-        this.builder.add((byte) (this.rows & 0xff));
-
-        System.out.println("@encode STARTING (" + raw.size() + " frames)...");
-        //loop over all video frames
-        for (int k = 0; k < raw.size(); k++) {
-            matches = 0;
-
-            BufferedImage pframe = raw.get(k);
-
-            // We only take as a reference frame the first picture from every GOP
-            if (k % this.gop == 0) {
-                // Imágenes codificadas intracuadro (origen)
-                iframe = chunkFrame(pframe);
-                System.out.println("-> New _IFRAME " + k + " splitted into " + iframe.length + " chunks");
-            } else {
-                // Imágenes codificadas intercuadro (destino)
-                coords = new ArrayList();
-                this.builder.add((byte) (k & 0xff));
-                System.out.print("\t_PFRAME " + k + " ...");
-
-                this.builder.add((byte) 0);
-                this.builder.add((byte) 0);
-                int m_index = this.builder.size() - 2;
-                /* we get the m_index as a pointer as it reserves the needed bytes positions in the array,
-                Once we have computed matches, we can update it directly */
-
-                //template-matching for each block of IFRAME into PFRAME
-    /*
-                for (int h = 0; h < iframe.length; h++) {
-                    //System.out.println("\t\t@debug tenplate matching iteration "+ h );
-                    if (templateMatching(h, iframe[h], pframe, coords)) matches++;
-                }
-
-                System.out.println("\t\t-> total matches [" + matches + "]");
-                if (matches > 0) {
-                    //Let's update matches field with a valid value
-                    this.builder.set(m_index, (byte) (matches & 0xff));
-                    this.builder.set(m_index + 1, (byte) ((matches >> 8) & 0xff));
-
-                    setPatchColor(pframe, coords);
-                }
-            }
-        }
-        System.out.println("@encode FINISHED (" + raw.size() + "frames)");
-
-        //builder GZIP compression:
-        if (!compressGzipFile(toByteArray(this.builder))) {
-            System.out.println("GZIP compression failed!");
-            return;
-        }
-        System.out.println("[Builder GZIP compression succeded]");
-
-        //average filtering:
-        System.out.println("Aplicant filtre d'average...");
-        //aplicar filtro average.
-
-        // Files to tar
-        File[] files = new File[2];
-        files[0] = new File(VIDEO_FNAME);
-        files[1] = new File(BUILDER_FNAME);
-
-        //images JPEG compression:
-        saveZip(files[0]);
-
-        //pack GZIP builder & compressed JPEG video togheter
-        try {
-            tar(files);
-        } catch (FileNotFoundException ex) {
-            System.out.println("A problem happened while generating tar");
-            ex.printStackTrace();
-        }
-
     }
-
-*/
 }
