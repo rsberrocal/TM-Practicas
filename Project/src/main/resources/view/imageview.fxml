@@ -5,6 +5,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ImagePane">
    <children>
@@ -19,31 +20,43 @@
             <Pane prefHeight="282.0" prefWidth="600.0">
                <children>
                   <ImageView fx:id="imageContainer" fitHeight="182.0" fitWidth="228.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label layoutX="402.0" layoutY="14.0" text="Parametros seleccionados" />
+                  <Label layoutX="402.0" layoutY="14.0" text="Parametros de encoding">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
                   <Label layoutX="402.0" layoutY="34.0" prefHeight="17.0" prefWidth="44.0" text="Encode" />
-                  <Label layoutX="402.0" layoutY="53.0" text="Decode" />
-                  <Label layoutX="402.0" layoutY="72.0" prefWidth="16.0" text="fps" />
-                  <CheckBox layoutX="532.0" layoutY="34.0" mnemonicParsing="false" />
-                  <CheckBox layoutX="532.0" layoutY="53.0" mnemonicParsing="false" />
-                  <CheckBox fx:id="negativeCheck" layoutX="532.0" layoutY="119.0" mnemonicParsing="false" />
-                  <Label fx:id="fpsValue" alignment="BASELINE_RIGHT" contentDisplay="TEXT_ONLY" layoutX="439.0" layoutY="72.0" prefHeight="17.0" prefWidth="110.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="97.0" prefHeight="17.0" prefWidth="69.0" text="binarization" />
-                  <Label fx:id="binaritzationValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="97.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="119.0" prefHeight="17.0" prefWidth="69.0" text="negative" />
-                  <Label layoutX="402.0" layoutY="174.0" prefHeight="17.0" prefWidth="69.0" text="averaging" />
-                  <Label fx:id="averagingValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="174.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="190.0" prefHeight="17.0" prefWidth="69.0" text="nTiles" />
-                  <Label layoutX="402.0" layoutY="207.0" prefHeight="17.0" prefWidth="69.0" text="seekRange" />
-                  <Label alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="207.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="225.0" prefHeight="17.0" prefWidth="69.0" text="GOP" />
-                  <Label alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="225.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="242.0" prefHeight="17.0" prefWidth="69.0" text="quality" />
-                  <Label alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="242.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <CheckBox fx:id="saturationCheck" layoutX="532.0" layoutY="136.0" mnemonicParsing="false" />
-                  <Label layoutX="402.0" layoutY="136.0" prefHeight="17.0" prefWidth="69.0" text="saturation" />
-                  <Label fx:id="averagingValue1" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="190.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
-                  <Label layoutX="402.0" layoutY="154.0" prefHeight="17.0" prefWidth="120.0" text="Edge Detection TH" />
-                  <Label fx:id="edgDValue" alignment="BASELINE_RIGHT" layoutX="525.0" layoutY="154.0" prefHeight="17.0" prefWidth="23.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="122.0" text="Decode" />
+                  <Label layoutX="402.0" layoutY="264.0" prefHeight="17.0" prefWidth="41.0" text="FPS" />
+                  <CheckBox fx:id="encodeCheck" layoutX="532.0" layoutY="34.0" mnemonicParsing="false" />
+                  <CheckBox fx:id="decodeCheck" layoutX="532.0" layoutY="122.0" mnemonicParsing="false" />
+                  <CheckBox fx:id="negativeCheck" layoutX="515.0" layoutY="165.0" mnemonicParsing="false" />
+                  <Label fx:id="fpsValue" alignment="BASELINE_RIGHT" contentDisplay="TEXT_ONLY" layoutX="439.0" layoutY="264.0" prefHeight="17.0" prefWidth="110.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="184.0" prefHeight="17.0" prefWidth="110.0" text="Binarization" />
+                  <Label fx:id="binaritzationValue" alignment="BASELINE_RIGHT" layoutX="485.0" layoutY="184.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="165.0" prefHeight="17.0" prefWidth="110.0" text="Negative" />
+                  <Label layoutX="402.0" layoutY="238.0" prefHeight="17.0" prefWidth="110.0" text="Averaging" />
+                  <Label fx:id="averagingValue" alignment="BASELINE_RIGHT" layoutX="485.0" layoutY="239.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="52.0" prefHeight="17.0" prefWidth="69.0" text="nTiles" />
+                  <Label layoutX="402.0" layoutY="69.0" prefHeight="17.0" prefWidth="69.0" text="SeekRange" />
+                  <Label fx:id="seekRangeValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="69.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="87.0" prefHeight="17.0" prefWidth="69.0" text="GOP" />
+                  <Label fx:id="GOPValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="87.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="104.0" prefHeight="17.0" prefWidth="69.0" text="Quality" />
+                  <Label fx:id="QualityValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="104.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <CheckBox id="saturationCheck" fx:id="saturationCheck" layoutX="515.0" layoutY="203.0" mnemonicParsing="false" />
+                  <Label layoutX="402.0" layoutY="203.0" prefHeight="17.0" prefWidth="110.0" text="Saturation" />
+                  <Label fx:id="nTilesValue" alignment="BASELINE_RIGHT" layoutX="471.0" layoutY="52.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="221.0" prefHeight="17.0" prefWidth="110.0" text="Edge Detection" />
+                  <Label fx:id="edgDValue" alignment="BASELINE_RIGHT" layoutX="485.0" layoutY="221.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
+                  <Label layoutX="402.0" layoutY="148.0" text="Filtros:">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <CheckBox id="binarizationCheck" fx:id="binarizationCheck" layoutX="515.0" layoutY="184.0" mnemonicParsing="false" />
+                  <CheckBox id="saturationCheck" fx:id="edgeDCheck" layoutX="515.0" layoutY="221.0" mnemonicParsing="false" />
+                  <CheckBox id="saturationCheck" fx:id="averagingCheck" layoutX="515.0" layoutY="239.0" mnemonicParsing="false" />
+                  <Label fx:id="saturationValue" alignment="BASELINE_RIGHT" layoutX="485.0" layoutY="203.0" prefHeight="17.0" prefWidth="77.0" text="0" textAlignment="RIGHT" />
                </children>
             </Pane>
          </children>

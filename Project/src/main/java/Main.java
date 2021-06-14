@@ -44,6 +44,11 @@ public class Main extends Application {
 
     public static int FPS = 24;
     public static int EDGEDETECTH = 0;
+    public static double SATVALUE = 0;
+    public static int NTILES = 0;
+    public static int SEEKRANGE = 0;
+    public static int GOP = 0;
+    public static double QUALITY = 0.00;
 
     final static int WIDTH = 600;
     final static int HEIGHT = 400;
@@ -69,8 +74,8 @@ public class Main extends Application {
         System.out.println("Se aplica un filtro de mediana sobre zonas de value x value");
         System.out.println("--edgeDetection {value}");
         System.out.println("Se aplica un filtro de detección de esquinas con un threshold (value)");
-        System.out.println("--saturacion");
-        System.out.println("Se aplica un filtro de saturación");
+        System.out.println("--saturacion {value}");
+        System.out.println("Se aplica un filtro de saturación, value entre 0 i 1");
         System.out.println("--nTiles {value}");
         System.out.println("Numero de teselas en la cual dividir la imagen.");
         System.out.println("--seekRange {value}");
@@ -324,8 +329,26 @@ public class Main extends Application {
     }
 
     private void setSaturation() {
-        hasSaturation = true;
-        System.out.println("Se esta aplicando el filtro de saturación");
+        int index = params.indexOf("--saturacion");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                String threshold = params.get(dataIdx);
+                if (isNumeric(threshold)) {
+                    SATVALUE = Double.parseDouble(threshold);
+                    hasSaturation = true;
+                    System.out.println("Se esta aplicando el filtro de saturación");
+                } else {
+                    printError("Parametro erroneo");
+
+                }
+            }
+        }
     }
 
     private void setBatch() {
@@ -389,19 +412,19 @@ public class Main extends Application {
         }
 
         if (params.contains("--nTiles")) {
-            //setNTiles();
+            setNTiles();
         }
 
         if (params.contains("--seekRange")) {
-            //setSeekRange();
+            setSeekRange();
         }
 
         if (params.contains("--GOP")) {
-            //setGop();
+            setGop();
         }
 
         if (params.contains("--quality")) {
-            //setQuality();
+            setQuality();
         }
 
         if (params.contains("--batch")|| params.contains("-b")) {
@@ -420,7 +443,97 @@ public class Main extends Application {
         initApp(primaryStage);
     }
 
+    private void setNTiles() {
+        int index = params.indexOf("--saturacion");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                String value = params.get(dataIdx);
+                if (isNumeric(value)) {
+                    NTILES = Integer.parseInt(value);
 
+                    System.out.println("nTiles: "+NTILES);
+                } else {
+                    printError("Parametro erroneo");
+
+                }
+            }
+        }
+    }
+
+    private void setSeekRange() {
+        int index = params.indexOf("--seekRange");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                String value = params.get(dataIdx);
+                if (isNumeric(value)) {
+                    SEEKRANGE = Integer.parseInt(value);
+
+                    System.out.println("seekRange: "+ SEEKRANGE);
+                } else {
+                    printError("Parametro erroneo");
+
+                }
+            }
+        }
+    }
+
+    private void setGop() {
+        int index = params.indexOf("--GOP");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                String value = params.get(dataIdx);
+                if (isNumeric(value)) {
+                    GOP = Integer.parseInt(value);
+
+                    System.out.println("GOP: "+GOP);
+                } else {
+                    printError("Parametro erroneo");
+
+                }
+            }
+        }
+    }
+
+    private void setQuality() {
+        int index = params.indexOf("--quality");
+        if (index == -1) {
+            printError("No se ha encotrado el parametro");
+        } else {
+            // Buscamos el parametro
+            int dataIdx = index + 1;
+            if (dataIdx > params.size() - 1) {
+                printError("No se ha encotrado el parametro");
+            } else {
+                String value = params.get(dataIdx);
+                if (isNumeric(value)) {
+                    QUALITY = Double.parseDouble(value);
+
+                    System.out.println("Quality: "+QUALITY);
+                } else {
+                    printError("Parametro erroneo");
+
+                }
+            }
+        }
+    }
 
 
     public void initApp(Stage primaryStage) throws Exception {

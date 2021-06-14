@@ -26,22 +26,53 @@ public class ImagePane extends GridPane implements Initializable {
     public ImageView imageContainer;
 
     @FXML
+    public CheckBox encodeCheck;
+
+    @FXML
+    public CheckBox decodeCheck;
+
+    @FXML
     public CheckBox negativeCheck;
+
+    @FXML
+    public CheckBox binarizationCheck;
 
     @FXML
     public CheckBox saturationCheck;
 
     @FXML
+    public CheckBox edgeDCheck;
+
+    @FXML
+    public CheckBox averagingCheck;
+
+    @FXML
     public Label binaritzationValue;
 
     @FXML
-    public Label averagingValue;
+    public Label saturationValue;
 
     @FXML
     public Label edgDValue;
 
     @FXML
+    public Label averagingValue;
+
+    @FXML
     public Label fpsValue;
+
+    @FXML
+    public Label nTilesValue;
+
+    @FXML
+    public Label seekRangeValue;
+
+    @FXML
+    public Label GOPValue;
+
+    @FXML
+    public Label QualityValue;
+
 
     public String pathDir = "output/images/";
 
@@ -135,14 +166,29 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void changeFilterView() {
+        encodeCheck.setSelected(Main.hasNegative);
+        encodeCheck.setDisable(true);
+        decodeCheck.setSelected(Main.hasNegative);
+        decodeCheck.setDisable(true);
         negativeCheck.setSelected(Main.hasNegative);
         negativeCheck.setDisable(true);
+        binarizationCheck.setSelected(Main.hasBinarisation);
+        binarizationCheck.setDisable(true);
         saturationCheck.setSelected(Main.hasSaturation);
         saturationCheck.setDisable(true);
-        fpsValue.setText(String.valueOf(Main.FPS));
-        edgDValue.setText(String.valueOf(Main.EDGEDETECTH));
+        edgeDCheck.setSelected(Main.hasEdgeDetection);
+        edgeDCheck.setDisable(true);
+        averagingCheck.setSelected(Main.hasAveraging);
+        averagingCheck.setDisable(true);
+        nTilesValue.setText(String.valueOf(Main.NTILES));
+        seekRangeValue.setText(String.valueOf(Main.SEEKRANGE));
+        GOPValue.setText(String.valueOf(Main.GOP));
+        QualityValue.setText(String.valueOf(Main.QUALITY));
         binaritzationValue.setText(String.valueOf(Main.binarisationValue));
+        saturationValue.setText(String.valueOf(Main.SATVALUE));
+        edgDValue.setText(String.valueOf(Main.EDGEDETECTH));
         averagingValue.setText(String.valueOf(Main.avaragingValue));
+        fpsValue.setText(String.valueOf(Main.FPS));
     }
 
     public void doEncode() {
@@ -171,7 +217,7 @@ public class ImagePane extends GridPane implements Initializable {
         if (Main.hasNegative) {
             a = filtreNegatiu(a);
         }if(Main.hasSaturation){
-            //a = filtreSaturation(a);
+            a = filtresaturacio(a, Main.SATVALUE);
         }
 
         return a;
@@ -268,7 +314,7 @@ public class ImagePane extends GridPane implements Initializable {
         BufferedImage result = new BufferedImage(imatge.getColorModel(), tesela, imatge.isAlphaPremultiplied(), null);
         return result;
     }
-    
+
     public BufferedImage filtreEdgeDetection(BufferedImage a, int edgeDist) {
         Color white = new Color(255,255,255);
         Color black = new Color(0,0,0);
@@ -296,6 +342,48 @@ public class ImagePane extends GridPane implements Initializable {
             }
         }
         return a;
+    }
+
+    public BufferedImage filtresaturacio(BufferedImage imatge, double s) {
+        double RW = 0.3086;
+        double RG = 0.6084;
+        double RB = 0.0820;
+
+        final double a = (1 - s) * RW + s;
+        final double b = (1 - s) * RW;
+        final double c = (1 - s) * RW;
+        final double d = (1 - s) * RG;
+        final double e = (1 - s) * RG + s;
+        final double f = (1 - s) * RG;
+        final double g = (1 - s) * RB;
+        final double h = (1 - s) * RB;
+        final double i = (1 - s) * RB + s;
+
+        final int width = imatge.getWidth();
+        final int height = imatge.getHeight();
+        final double[] red = new double[width * height];
+        final double[] green = new double[width * height];
+        final double[] blue = new double[width * height];
+
+        final WritableRaster raster = imatge.getRaster();
+        raster.getSamples(0, 0, width, height, 0, red);
+        raster.getSamples(0, 0, width, height, 1, green);
+        raster.getSamples(0, 0, width, height, 2, blue);
+
+        for (int x = 0; x < red.length; x++) {
+            final double r0 = red[x];
+            final double g0 = green[x];
+            final double b0 = blue[x];
+            red[x] = a * r0 + d * g0 + g * b0;
+            green[x] = b * r0 + e * g0 + h * b0;
+            blue[x] = c * r0 + f * g0 + i * b0;
+        }
+
+        raster.setSamples(0, 0, width, height, 0, red);
+        raster.setSamples(0, 0, width, height, 1, green);
+        raster.setSamples(0, 0, width, height, 2, blue);
+
+        return imatge;
     }
 
 
