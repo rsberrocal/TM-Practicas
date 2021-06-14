@@ -264,7 +264,6 @@ public class ImagePane extends GridPane implements Initializable {
         int aux = Main.GOP;
         int num = 0;
         for (int i = 0; i < imagesBuffered.size(); i++) {
-            if
             if (aux == Main.GOP) {
                 aux = 1;
             } else {
