@@ -7,6 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import org.apache.commons.io.FileUtils;
+import org.javatuples.Pair;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -81,6 +83,8 @@ public class ImagePane extends GridPane implements Initializable {
     public static Map<String, BufferedImage> imatgesMap = new HashMap<>();
     public ArrayList<BufferedImage> imagesBuffered;
     public ArrayList<File> images;
+    private ArrayList<Pair<Integer, Integer>> listTilesInfo;
+    private File tileInfo;
 
     public void getDataFromZip() {
         this.images = new ArrayList<>();
@@ -110,10 +114,14 @@ public class ImagePane extends GridPane implements Initializable {
                         fos.write(buffer, 0, len);
                     }
                     fos.close();
-                    Image image = new Image(newFile.toURI().toString());
-                    BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
-                    this.imagesBuffered.add(imatgeModi);
-                    this.images.add(newFile);
+                    if (newFile.getName().equals("tileInfo.info")) {
+                        tileInfo = newFile;
+                    } else {
+                        Image image = new Image(newFile.toURI().toString());
+                        BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null); // crea bufferedimage
+                        this.imagesBuffered.add(imatgeModi);
+                        this.images.add(newFile);
+                    }
                 } else {
                     System.out.println("Unzipping dir " + name);
                     File newDir = new File(pathDir + File.separator + name);
@@ -173,8 +181,28 @@ public class ImagePane extends GridPane implements Initializable {
                 ImageIO.write(img, "jpeg", zipOutputStream);
                 i++;
             }
+            File aux = new File("titleInfo");
+            FileWriter writer = new FileWriter(aux);
+            for (Pair<Integer, Integer> p : listTilesInfo) {
+                writer.append(String.valueOf(p.getValue0())).append(",").append(String.valueOf(p.getValue1()));
+                writer.append("\n");
+            }
+            writer.flush();
+            writer.close();
+
+            FileInputStream fis = new FileInputStream(aux);
+
+            ZipEntry tileInfo = new ZipEntry("tileInfo.info");
+            zipOutputStream.putNextEntry(tileInfo);
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) > 0) {
+                zipOutputStream.write(buffer, 0, len);
+            }
             zipOutputStream.finish();
             zipOutputStream.close();
+
             long endZip = System.currentTimeMillis() - startZip;
             System.out.println("All saved at " + endZip + "ms");
         } catch (IOException e) {
@@ -247,27 +275,65 @@ public class ImagePane extends GridPane implements Initializable {
     public void doEncode() {
         long startEncode = System.currentTimeMillis();
         int aux = Main.GOP;
+        ArrayList<Pair<Integer, Integer>> tilesInfo = new ArrayList<>();
         for (int i = 0; i < imagesBuffered.size(); i++) {
             if (aux == Main.GOP) {
                 aux = 1;
             } else {
-                imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
+                Pair<BufferedImage, ArrayList<Pair<Integer, Integer>>> res = Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 0.06);
+                imagesBuffered.set(i, res.getValue0());
+                tilesInfo.addAll(res.getValue1());
                 aux++;
             }
         }
+        listTilesInfo = tilesInfo;
         long endEncode = System.currentTimeMillis() - startEncode;
         System.out.println("Encoded all at " + endEncode + " ms");
     }
 
+    private ArrayList<Pair<Integer, Integer>> getTileInfoByFile() {
+        ArrayList<Pair<Integer, Integer>> res = new ArrayList<>();
+        BufferedReader reader;
+        try {
+            FileReader f = new FileReader(tileInfo);
+            reader = new BufferedReader(f);
+            String line = reader.readLine();
+            while (line != null) {
+                System.out.println(res.size());
+                // read next line
+                line = reader.readLine();
+                if (line != null) {
+                    String[] datas = line.split(",");
+                    Pair<Integer, Integer> p = Pair.with(Integer.valueOf(datas[0]), Integer.valueOf(datas[1]));
+                    res.add(p);
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public void doDecode() {
         long startDecode = System.currentTimeMillis();
+
+        if (!Main.hasEncode) {
+            listTilesInfo = getTileInfoByFile();
+        }
         int aux = Main.GOP;
         int num = 0;
-        for (int i = 0; i < imagesBuffered.size(); i++) {
-            if (aux == Main.GOP) {
+        int width = imagesBuffered.get(0).getWidth();
+        int height = imagesBuffered.get(0).getHeight();
+        for (int i = 1; i < imagesBuffered.size(); i++) {
+            if (i % Main.GOP != 0) {
                 aux = 1;
             } else {
-                imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
+                //imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
+                BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                for (int k = 0; k < listTilesInfo.get(i).getValue0(); k++){
+                    //int x =
+                }
                 aux++;
             }
         }
@@ -277,6 +343,7 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Una vez selecionada una imagen le añadiremos los filtros dependiendo de cuales tenga.
+     *
      * @param a la imagen que sera modificada
      * @return la imagen ya modificada
      */
@@ -302,6 +369,7 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Pasa una imagen por parametro para modificarla y aplicarle un filtro negativo
+     *
      * @param imatge Imagen que sera modificada
      * @return imagen ya modificada
      */
@@ -324,8 +392,9 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Aplica el filtro de la media para hacer que se vea mas suave
+     *
      * @param imatge la imagen que sera modificada
-     * @param avNum el threshold de media
+     * @param avNum  el threshold de media
      * @return la imagen modificada
      */
     public BufferedImage filtreAveraging(BufferedImage imatge, int avNum) {
@@ -336,7 +405,7 @@ public class ImagePane extends GridPane implements Initializable {
                 for (int t = -avNum; t <= avNum; t++) {
                     for (int z = -avNum; z <= avNum; z++) {
                         // t i z serviran de coordenades a dins de la finestra, pero abans hem de comprovar que la finestra no estigui fora del limit imatge
-                        if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0 )&& (x + (z) >= 0)) {
+                        if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0) && (x + (z) >= 0)) {
                             Color colorP = new Color(imatge.getRGB(x, y));
                             a += colorP.getAlpha();
                             r += colorP.getRed();
@@ -355,6 +424,7 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Dependiendo del parametro el pixel serà o negro o blanco
+     *
      * @param imatge imagen que se modificara
      * @param binNum threshold
      * @return imagen modificada
@@ -391,7 +461,8 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Este filtro hace que se marquen los contornos del contenido de la imagen
-     * @param a Imagen que ser modificara
+     *
+     * @param a         Imagen que ser modificara
      * @param threshold
      * @return imagen modificada
      */
@@ -431,8 +502,9 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Modifica la saturacion de la BufferedImage que pasamos por parametro segun el factor de saturacion
+     *
      * @param imatge es la imagen que queremos modificar
-     * @param s es el porcentage de saturacion
+     * @param s      es el porcentage de saturacion
      * @return
      */
     public BufferedImage filtreSaturacio(BufferedImage imatge, double s) {
@@ -455,7 +527,7 @@ public class ImagePane extends GridPane implements Initializable {
         raster.getSamples(0, 0, width, height, 2, b);
 
         // pasara por todod el mapa de bits i calculara el nuevo valor de cada canal
-        for (int x = 0; x < (width*height); x++) {
+        for (int x = 0; x < (width * height); x++) {
             double rp = r[x];
             double gp = g[x];
             double bp = b[x];
@@ -489,10 +561,11 @@ public class ImagePane extends GridPane implements Initializable {
             setFilters();
             doEncode();
         } else if (Main.status == 2) {  //NO ENCODE SI DECODE
-
+            doDecode();
         } else if (Main.status == 3) {  //SI ENCODE SI DECODE
             setFilters();
             doEncode();
+            doDecode();
         }
         changeFilterView();
         showImages();

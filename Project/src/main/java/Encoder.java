@@ -3,6 +3,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 public class Encoder {
@@ -65,12 +67,12 @@ public class Encoder {
         return new Color(r, g, b);
     }
 
-    public static BufferedImage encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, double quality) {
+    public static Pair<BufferedImage, ArrayList<Pair<Integer, Integer>>> encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, double quality) {
         System.out.println("Encoding image");
         boolean found = false;
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesInput = getTiles(input, blockSizeX, blockSizeY);
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesCompare = getTiles(imageCompare, blockSizeX, blockSizeY);
-
+        ArrayList<Pair<Integer, Integer>> tilesValues = new ArrayList<>();
         BufferedImage result = input;
 
         for (Triplet<BufferedImage, Integer, Integer> tileInput : tilesInput) {
@@ -83,14 +85,16 @@ public class Encoder {
                         }
                     }
                     found = true;
+                    Pair<Integer, Integer> pair = Pair.with(tileInput.getValue1(), tileInput.getValue2());
+                    tilesValues.add(pair);
                     break;
                 }
             }
-            if (found){
+            /*if (found){
                 break;
-            }
+            }*/
         }
 
-        return result;
+        return Pair.with(result, tilesValues);
     }
 }
