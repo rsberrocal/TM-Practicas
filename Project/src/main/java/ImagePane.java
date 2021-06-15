@@ -330,19 +330,20 @@ public class ImagePane extends GridPane implements Initializable {
      */
     public BufferedImage filtreAveraging(BufferedImage imatge, int avNum) {
         // Mitja R, G, B
-        int[] mitjaColor = new int[3];
+        Color[] mitjaColor = new Color[3];
         // Creació de la tesela a on podrem modificar els pixels
         WritableRaster raster = imatge.copyData(null);
         WritableRaster tesela = raster.createWritableChild(imatge.getMinX(), imatge.getMinY(), imatge.getWidth(), imatge.getHeight(), 0, 0, null);
         for (int x = 0; x < imatge.getWidth() - 1; x++) {
             for (int y = 0; y < imatge.getHeight() - 1; y++) { // x i y de la imatge
-                int r = 0, g = 0, b = 0;
+                int r = 0, g = 0, b = 0, a = 0;
                 // utilitzem l'average number per la finestra interior
                 for (int t = -avNum; t <= avNum; t++) {
                     for (int z = -avNum; z <= avNum; z++) {
                         // t i z serviran de coordenades a dins de la finestra, pero abans hem de comprovar que la finestra no estigui fora del limit imatge
                         if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0 )&& (x + (z) >= 0)) {
                             Color colorP = new Color(imatge.getRGB(x, y));
+                            a += colorP.getAlpha();
                             r += colorP.getRed();
                             g += colorP.getGreen();
                             b += colorP.getBlue();
@@ -350,19 +351,11 @@ public class ImagePane extends GridPane implements Initializable {
                     }
                 }
                 int espai = (avNum - (-avNum) + 1) * (avNum - (-avNum) + 1);
-                // For every channel, compute the new pixel value
-                mitjaColor[0] = (r / espai);
-                mitjaColor[1] = (g / espai);
-                mitjaColor[2] = (b / espai);
-                // Apliquem els nous colors en el raster
-                raster.setPixel(x, y, mitjaColor);
+                // calcula els nous valors a traves de fer la mitja amb els valors del voltant entre el numero d'espais
+                imatge.setRGB(x, y, ((a/espai) << 24) | ((r/espai) << 16) | ((g/espai) << 8) | (b/espai));
             }
         }
-        // un cop creada la imatge, les fem bufferedImage a traves del color model i el alpha i la retornem
-        ColorModel colorM = imatge.getColorModel();
-        boolean alpha = imatge.isAlphaPremultiplied();
-        BufferedImage subImage = new BufferedImage(colorM, tesela, alpha, null);
-        return subImage;
+        return imatge;
     }
 
     /**
