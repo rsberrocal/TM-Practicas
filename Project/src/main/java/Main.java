@@ -47,11 +47,11 @@ public class Main extends Application {
     public static int FPS = 24;
     public static int EDGEDETECTH = 0;
     public static double SATVALUE = 0;
-    public static int NTILESX = 0;
-    public static int NTILESY = 0;
+    public static int NTILESX = 8;
+    public static int NTILESY = 8;
     public static int SEEKRANGE = 0;
-    public static int GOP = 0;
-    public static double QUALITY = 0.00;
+    public static int GOP = 1;
+    public static double QUALITY = 0.4;
 
     final static int WIDTH = 600;
     final static int HEIGHT = 400;

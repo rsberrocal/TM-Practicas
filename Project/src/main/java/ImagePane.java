@@ -181,7 +181,7 @@ public class ImagePane extends GridPane implements Initializable {
                 ImageIO.write(img, "jpeg", zipOutputStream);
                 i++;
             }
-            if (Main.status > 0){
+            if (Main.status > 0) {
                 File aux = new File("titleInfo");
                 FileWriter writer = new FileWriter(aux);
                 for (ArrayList<Pair<Integer, Integer>> tile : listTilesInfo) {
@@ -338,15 +338,11 @@ public class ImagePane extends GridPane implements Initializable {
         if (!Main.hasEncode) {
             listTilesInfo = getTileInfoByFile();
         }
-        int aux = Main.GOP;
-        int num = 0;
         int width = imagesBuffered.get(0).getWidth();
         int height = imagesBuffered.get(0).getHeight();
         for (int i = 1; i < imagesBuffered.size(); i++) {
             if (i % Main.GOP != 0) {
-                //imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
-                BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                newImg = imagesBuffered.get(i);
+                BufferedImage newImg = imagesBuffered.get(i);
                 for (int k = 0; k < listTilesInfo.get(i).size(); k++) {
                     for (Pair<Integer, Integer> p : listTilesInfo.get(i)) {
                         int x = p.getValue0();
