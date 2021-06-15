@@ -54,7 +54,7 @@ public class Main extends Application {
     public static double QUALITY = 0.4;
 
     final static int WIDTH = 600;
-    final static int HEIGHT = 400;
+    final static int HEIGHT = 500;
 
     public void showHelp() {
         System.out.println("Lista de parametros a usar:");

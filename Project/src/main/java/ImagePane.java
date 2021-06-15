@@ -30,6 +30,9 @@ public class ImagePane extends GridPane implements Initializable {
     public ImageView imageContainer;
 
     @FXML
+    public ImageView imageContainer2;
+
+    @FXML
     public CheckBox encodeCheck;
 
     @FXML
@@ -231,7 +234,10 @@ public class ImagePane extends GridPane implements Initializable {
                         Platform.runLater(() -> {
 
                             imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null));
-
+                            if (Main.status == 3) {
+                                //PONER LAS IMAGENES DEL DECODE!
+                                imageContainer2.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null));
+                            }
                         });
                         try {
                             int pepe = 1000 / Main.FPS;  // Muestra un frame cada pepe ms
