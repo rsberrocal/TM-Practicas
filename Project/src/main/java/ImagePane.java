@@ -341,7 +341,7 @@ public class ImagePane extends GridPane implements Initializable {
                 for (int t = -avNum; t <= avNum; t++) {
                     for (int z = -avNum; z <= avNum; z++) {
                         // t i z serviran de coordenades a dins de la finestra, pero abans hem de comprovar que la finestra no estigui fora del limit imatge
-                        if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0 && x + (z) >= 0)) {
+                        if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0 )&& (x + (z) >= 0)) {
                             Color colorP = new Color(imatge.getRGB(x, y));
                             r += colorP.getRed();
                             g += colorP.getGreen();
@@ -351,9 +351,9 @@ public class ImagePane extends GridPane implements Initializable {
                 }
                 int espai = (avNum - (-avNum) + 1) * (avNum - (-avNum) + 1);
                 // For every channel, compute the new pixel value
-                mitjaColor[0] = (int) (r / espai);
-                mitjaColor[1] = (int) (g / espai);
-                mitjaColor[2] = (int) (b / espai);
+                mitjaColor[0] = (r / espai);
+                mitjaColor[1] = (g / espai);
+                mitjaColor[2] = (b / espai);
                 // Apliquem els nous colors en el raster
                 raster.setPixel(x, y, mitjaColor);
             }
