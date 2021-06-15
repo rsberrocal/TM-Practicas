@@ -200,13 +200,13 @@ public class ImagePane extends GridPane implements Initializable {
 
                         });
                         try {
-                            int pepe = 1000 / Main.FPS;
+                            int pepe = 1000 / Main.FPS;  // Muestra un frame cada pepe ms
                             Thread.sleep(pepe);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         if (i == imagesBuffered.size() - 1) {
-                            i = 0;                          // aixo fa que no pari
+                            i = 0;                          // nonstop
                         }
                     }
                 }
@@ -275,48 +275,59 @@ public class ImagePane extends GridPane implements Initializable {
         System.out.println("Encoded all at " + endDecode + " ms");
     }
 
+    /**
+     * Una vez selecionada una imagen le añadiremos los filtros dependiendo de cuales tenga.
+     * @param a la imagen que sera modificada
+     * @return la imagen ya modificada
+     */
     public BufferedImage seleccioFiltres(BufferedImage a) {
+        if (Main.hasSaturation) {
+            a = filtreSaturacio(a, Main.SATVALUE);
+        }
+        if (Main.hasAveraging) {
+            a = filtreAveraging(a, Main.avaragingValue);
+        }
         if (Main.hasEdgeDetection) {
             a = filtreEdgeDetection(a, Main.EDGEDETECTH);
         }
         if (Main.hasBinarisation) {
             a = filtreBinarisation(a, Main.binarisationValue);
         }
-        if (Main.hasAveraging) {
-            a = filtreAveraging(a, Main.avaragingValue);
-        }
         if (Main.hasNegative) {
             a = filtreNegatiu(a);
-        }
-        if (Main.hasSaturation) {
-            a = filtresaturacio(a, Main.SATVALUE);
         }
 
         return a;
     }
 
+    /**
+     * Pasa una imagen por parametro para modificarla y aplicarle un filtro negativo
+     * @param imatge Imagen que sera modificada
+     * @return imagen ya modificada
+     */
     public BufferedImage filtreNegatiu(BufferedImage imatge) {
-        WritableRaster raster = imatge.copyData(null);
-        ColorModel colorM = imatge.getColorModel();
-        boolean alpha = colorM.isAlphaPremultiplied();
-        BufferedImage bImage = new BufferedImage(colorM, raster, alpha, null);
         for (int y = 0; y < imatge.getHeight(); y++) {
             for (int x = 0; x < imatge.getWidth(); x++) {
-                int pixel = imatge.getRGB(x, y);  // An integer pixel in the default RGB color model and default sRGB colorspace
-                int a = (pixel >> 24) & 0xff;
-                // RGB
-                int red = (pixel >> 16) & 0xff;
-                int green = (pixel >> 8) & 0xff;
-                int blue = pixel & 0xff;
-                // sobrescritura del pixel
-                pixel = (a << 24) | (255 - red << 16) | (255 - green << 8) | 255 - blue;
-                // i li assignem el nou valor a la imatge
-                bImage.setRGB(x, y, pixel);
+                // extreiem els valors alpha, RGB per posterior fer els inversos
+                Color colorP = new Color(imatge.getRGB(x, y));
+                int red = colorP.getRed();
+                int green = colorP.getGreen();
+                int blue = colorP.getBlue();
+                int a = colorP.getAlpha();
+
+                //li assignem el nou valor al pixel de la imatge
+                imatge.setRGB(x, y, (a << 24) | (255 - red << 16) | (255 - green << 8) | 255 - blue);
             }
         }
-        return bImage;
+        return imatge;
     }
 
+    /**
+     * Aplica el filtro de la media para hacer que se vea mas suave
+     * @param imatge la imagen que sera modificada
+     * @param avNum el threshold de media
+     * @return la imagen modificada
+     */
     public BufferedImage filtreAveraging(BufferedImage imatge, int avNum) {
         // Mitja R, G, B
         int[] mitjaColor = new int[3];
@@ -325,19 +336,16 @@ public class ImagePane extends GridPane implements Initializable {
         WritableRaster tesela = raster.createWritableChild(imatge.getMinX(), imatge.getMinY(), imatge.getWidth(), imatge.getHeight(), 0, 0, null);
         for (int x = 0; x < imatge.getWidth() - 1; x++) {
             for (int y = 0; y < imatge.getHeight() - 1; y++) { // x i y de la imatge
-                int r = 0;
-                int g = 0;
-                int b = 0;
+                int r = 0, g = 0, b = 0;
                 // utilitzem l'average number per la finestra interior
                 for (int t = -avNum; t <= avNum; t++) {
                     for (int z = -avNum; z <= avNum; z++) {
                         // t i z serviran de coordenades a dins de la finestra, pero abans hem de comprovar que la finestra no estigui fora del limit imatge
                         if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0 && x + (z) >= 0)) {
-                            int pixel = imatge.getRGB(x, y); // An integer pixel in the default RGB color model and default sRGB colorspace
-                            // RGB
-                            r += (pixel & 0x00ff0000) >> 16;
-                            g += (pixel & 0x0000ff00) >> 8;
-                            b += pixel & 0x000000ff;
+                            Color colorP = new Color(imatge.getRGB(x, y));
+                            r += colorP.getRed();
+                            g += colorP.getGreen();
+                            b += colorP.getBlue();
                         }
                     }
                 }
@@ -357,6 +365,12 @@ public class ImagePane extends GridPane implements Initializable {
         return subImage;
     }
 
+    /**
+     * Dependiendo del parametro el pixel serà o negro o blanco
+     * @param imatge imagen que se modificara
+     * @param binNum threshold
+     * @return imagen modificada
+     */
     public BufferedImage filtreBinarisation(BufferedImage imatge, int binNum) {
         // Creació de la tesela a on podrem modificar els pixels
         WritableRaster raster = imatge.copyData(null);
@@ -370,10 +384,10 @@ public class ImagePane extends GridPane implements Initializable {
 
         for (int x = 0; x < imatge.getWidth(); x++) {
             for (int y = 0; y < imatge.getHeight(); y++) {
-                int pixel = imatge.getRGB(x, y);
-                int red = (pixel & 0x00ff0000) >> 16;
-                int green = (pixel & 0x0000ff00) >> 8;
-                int blue = pixel & 0x000000ff;
+                Color colorP = new Color(imatge.getRGB(x, y));
+                int red = colorP.getRed();
+                int green = colorP.getGreen();
+                int blue = colorP.getBlue();
                 mitja = (red + green + blue) / 3; // extreu la mitja
                 if (mitja <= binNum) {
                     raster.setPixel(x, y, black); // seteja els pixels amb negre
@@ -387,26 +401,37 @@ public class ImagePane extends GridPane implements Initializable {
         return result;
     }
 
-    public BufferedImage filtreEdgeDetection(BufferedImage a, int edgeDist) {
+    /**
+     * Este filtro hace que se marquen los contornos del contenido de la imagen
+     * @param a Imagen que ser modificara
+     * @param threshold
+     * @return imagen modificada
+     */
+    public BufferedImage filtreEdgeDetection(BufferedImage a, int threshold) {
         Color white = new Color(255, 255, 255);
         Color black = new Color(0, 0, 0);
 
         Color topPixel = null;
-        Color lowerPixel = null;
-
         double topIntensity;
+
+        Color lowerPixel = null;
         double lowerIntensity;
 
+        // pasamos pixel por pixel
         for (int y = 0; y < a.getHeight() - 1; y++) {
             for (int x = 0; x < a.getWidth(); x++) {
 
+                // estas variables extraen el color con una altura de diferencia
                 topPixel = new Color(a.getRGB(x, y));
                 lowerPixel = new Color(a.getRGB(x, y + 1));
 
+                // haremos la suma de los caneles de color i extraemos la media
                 topIntensity = (topPixel.getRed() + topPixel.getGreen() + topPixel.getBlue()) / 3;
                 lowerIntensity = (lowerPixel.getRed() + lowerPixel.getGreen() + lowerPixel.getBlue()) / 3;
 
-                if (Math.abs(topIntensity - lowerIntensity) < edgeDist) {
+                // Obtenemos la diferencia entre la media sacada anteriormente y si es menor al threshold el pixel sera
+                // blanco sino, sera negro
+                if (Math.abs(topIntensity - lowerIntensity) < threshold) {
                     a.setRGB(x, y, white.getRGB());
                 } else {
                     a.setRGB(x, y, black.getRGB());
@@ -416,44 +441,45 @@ public class ImagePane extends GridPane implements Initializable {
         return a;
     }
 
-    public BufferedImage filtresaturacio(BufferedImage imatge, double s) {
+    /**
+     * Modifica la saturacion de la BufferedImage que pasamos por parametro segun el factor de saturacion
+     * @param imatge es la imagen que queremos modificar
+     * @param s es el porcentage de saturacion
+     * @return
+     */
+    public BufferedImage filtreSaturacio(BufferedImage imatge, double s) {
+        WritableRaster raster = imatge.getRaster();
+        int width = imatge.getWidth();
+        int height = imatge.getHeight();
+
+        double[] r = new double[width * height];
+        double[] g = new double[width * height];
+        double[] b = new double[width * height];
+
+        // Distribuimos los porcentages optimos para el efecto de saturacion
         double RW = 0.3086;
         double RG = 0.6084;
         double RB = 0.0820;
 
-        final double a = (1 - s) * RW + s;
-        final double b = (1 - s) * RW;
-        final double c = (1 - s) * RW;
-        final double d = (1 - s) * RG;
-        final double e = (1 - s) * RG + s;
-        final double f = (1 - s) * RG;
-        final double g = (1 - s) * RB;
-        final double h = (1 - s) * RB;
-        final double i = (1 - s) * RB + s;
+        // llena los r, g, b con el contenido 3 capas de raster rgb
+        raster.getSamples(0, 0, width, height, 0, r);
+        raster.getSamples(0, 0, width, height, 1, g);
+        raster.getSamples(0, 0, width, height, 2, b);
 
-        final int width = imatge.getWidth();
-        final int height = imatge.getHeight();
-        final double[] red = new double[width * height];
-        final double[] green = new double[width * height];
-        final double[] blue = new double[width * height];
-
-        final WritableRaster raster = imatge.getRaster();
-        raster.getSamples(0, 0, width, height, 0, red);
-        raster.getSamples(0, 0, width, height, 1, green);
-        raster.getSamples(0, 0, width, height, 2, blue);
-
-        for (int x = 0; x < red.length; x++) {
-            final double r0 = red[x];
-            final double g0 = green[x];
-            final double b0 = blue[x];
-            red[x] = a * r0 + d * g0 + g * b0;
-            green[x] = b * r0 + e * g0 + h * b0;
-            blue[x] = c * r0 + f * g0 + i * b0;
+        // pasara por todod el mapa de bits i calculara el nuevo valor de cada canal
+        for (int x = 0; x < (width*height); x++) {
+            double rp = r[x];
+            double gp = g[x];
+            double bp = b[x];
+            r[x] = ((1 - s) * RW + s) * rp + ((1 - s) * RG) * gp + ((1 - s) * RB) * bp;
+            g[x] = ((1 - s) * RW) * rp + ((1 - s) * RG + s) * gp + ((1 - s) * RB) * bp;
+            b[x] = ((1 - s) * RW) * rp + ((1 - s) * RG) * gp + (1 - s) * RB + s * bp;
         }
 
-        raster.setSamples(0, 0, width, height, 0, red);
-        raster.setSamples(0, 0, width, height, 1, green);
-        raster.setSamples(0, 0, width, height, 2, blue);
+        // setea los nuevos valores en el mapa de bits
+        raster.setSamples(0, 0, width, height, 0, r);
+        raster.setSamples(0, 0, width, height, 1, g);
+        raster.setSamples(0, 0, width, height, 2, b);
 
         return imatge;
     }
