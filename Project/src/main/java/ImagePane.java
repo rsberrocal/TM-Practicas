@@ -83,7 +83,7 @@ public class ImagePane extends GridPane implements Initializable {
     public static Map<String, BufferedImage> imatgesMap = new HashMap<>();
     public ArrayList<BufferedImage> imagesBuffered;
     public ArrayList<File> images;
-    private ArrayList<Pair<Integer, Integer>> listTilesInfo;
+    private ArrayList<ArrayList<Pair<Integer, Integer>>> listTilesInfo;
     private File tileInfo;
 
     public void getDataFromZip() {
@@ -181,27 +181,33 @@ public class ImagePane extends GridPane implements Initializable {
                 ImageIO.write(img, "jpeg", zipOutputStream);
                 i++;
             }
-            File aux = new File("titleInfo");
-            FileWriter writer = new FileWriter(aux);
-            for (Pair<Integer, Integer> p : listTilesInfo) {
-                writer.append(String.valueOf(p.getValue0())).append(",").append(String.valueOf(p.getValue1()));
-                writer.append("\n");
+            if (Main.status > 0){
+                File aux = new File("titleInfo");
+                FileWriter writer = new FileWriter(aux);
+                for (ArrayList<Pair<Integer, Integer>> tile : listTilesInfo) {
+                    writer.append("(");
+                    for (Pair<Integer, Integer> p : tile) {
+                        writer.append(String.valueOf(p.getValue0())).append(",").append(String.valueOf(p.getValue1()));
+                    }
+                    writer.append(")");
+                    writer.append("\n");
+                }
+                writer.flush();
+                writer.close();
+
+                FileInputStream fis = new FileInputStream(aux);
+
+                ZipEntry tileInfo = new ZipEntry("tileInfo.info");
+                zipOutputStream.putNextEntry(tileInfo);
+
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = fis.read(buffer)) > 0) {
+                    zipOutputStream.write(buffer, 0, len);
+                }
+                zipOutputStream.finish();
+                zipOutputStream.close();
             }
-            writer.flush();
-            writer.close();
-
-            FileInputStream fis = new FileInputStream(aux);
-
-            ZipEntry tileInfo = new ZipEntry("tileInfo.info");
-            zipOutputStream.putNextEntry(tileInfo);
-
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = fis.read(buffer)) > 0) {
-                zipOutputStream.write(buffer, 0, len);
-            }
-            zipOutputStream.finish();
-            zipOutputStream.close();
 
             long endZip = System.currentTimeMillis() - startZip;
             System.out.println("All saved at " + endZip + "ms");
@@ -273,14 +279,19 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void doEncode() {
+        System.out.println("Starting Encoding");
         long startEncode = System.currentTimeMillis();
         int aux = Main.GOP;
-        ArrayList<Pair<Integer, Integer>> tilesInfo = new ArrayList<>();
+        ArrayList<
+                ArrayList<
+                        Pair<Integer, Integer>
+                        >
+                > tilesInfo = new ArrayList<>();
         for (int i = 0; i < imagesBuffered.size(); i++) {
             if (aux == Main.GOP) {
                 aux = 1;
             } else {
-                Pair<BufferedImage, ArrayList<Pair<Integer, Integer>>> res = Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 0.06);
+                Pair<BufferedImage, ArrayList<ArrayList<Pair<Integer, Integer>>>> res = Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 0.06);
                 imagesBuffered.set(i, res.getValue0());
                 tilesInfo.addAll(res.getValue1());
                 aux++;
@@ -291,8 +302,8 @@ public class ImagePane extends GridPane implements Initializable {
         System.out.println("Encoded all at " + endEncode + " ms");
     }
 
-    private ArrayList<Pair<Integer, Integer>> getTileInfoByFile() {
-        ArrayList<Pair<Integer, Integer>> res = new ArrayList<>();
+    private ArrayList<ArrayList<Pair<Integer, Integer>>> getTileInfoByFile() {
+        ArrayList<ArrayList<Pair<Integer, Integer>>> res = new ArrayList<>();
         BufferedReader reader;
         try {
             FileReader f = new FileReader(tileInfo);
@@ -303,9 +314,14 @@ public class ImagePane extends GridPane implements Initializable {
                 // read next line
                 line = reader.readLine();
                 if (line != null) {
+                    line = line.substring(1, line.length() - 1);
                     String[] datas = line.split(",");
-                    Pair<Integer, Integer> p = Pair.with(Integer.valueOf(datas[0]), Integer.valueOf(datas[1]));
-                    res.add(p);
+                    ArrayList<Pair<Integer, Integer>> aux = new ArrayList<>();
+                    for (int i = 0; i < datas.length; i += 2) {
+                        Pair<Integer, Integer> p = Pair.with(Integer.valueOf(datas[i]), Integer.valueOf(datas[i + 1]));
+                        aux.add(p);
+                    }
+                    res.add(aux);
                 }
             }
             reader.close();
@@ -316,6 +332,7 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void doDecode() {
+        System.out.println("Starting Decode...");
         long startDecode = System.currentTimeMillis();
 
         if (!Main.hasEncode) {
@@ -327,14 +344,21 @@ public class ImagePane extends GridPane implements Initializable {
         int height = imagesBuffered.get(0).getHeight();
         for (int i = 1; i < imagesBuffered.size(); i++) {
             if (i % Main.GOP != 0) {
-                aux = 1;
-            } else {
                 //imagesBuffered.set(i, Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 80.0));
                 BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                for (int k = 0; k < listTilesInfo.get(i).getValue0(); k++){
-                    //int x =
+                newImg = imagesBuffered.get(i);
+                for (int k = 0; k < listTilesInfo.get(i).size(); k++) {
+                    for (Pair<Integer, Integer> p : listTilesInfo.get(i)) {
+                        int x = p.getValue0();
+                        int y = p.getValue1();
+                        for (int auxX = x; auxX < x + (width / Main.NTILES); auxX++) {
+                            for (int auxY = y; auxY < y + (height / Main.NTILES); auxY++) {
+                                newImg.setRGB(auxX, auxY, imagesBuffered.get(i).getRGB(auxX, auxY));
+                            }
+                        }
+                    }
                 }
-                aux++;
+                imagesBuffered.set(i, newImg);
             }
         }
         long endDecode = System.currentTimeMillis() - startDecode;
@@ -416,7 +440,7 @@ public class ImagePane extends GridPane implements Initializable {
                 }
                 int espai = (avNum - (-avNum) + 1) * (avNum - (-avNum) + 1);
                 // calcula els nous valors a traves de fer la mitja amb els valors del voltant entre el numero d'espais
-                imatge.setRGB(x, y, ((a/espai) << 24) | ((r/espai) << 16) | ((g/espai) << 8) | (b/espai));
+                imatge.setRGB(x, y, ((a / espai) << 24) | ((r / espai) << 16) | ((g / espai) << 8) | (b / espai));
             }
         }
         return imatge;
