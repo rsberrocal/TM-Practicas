@@ -47,7 +47,8 @@ public class Main extends Application {
     public static int FPS = 24;
     public static int EDGEDETECTH = 0;
     public static double SATVALUE = 0;
-    public static int NTILES = 0;
+    public static int NTILESX = 0;
+    public static int NTILESY = 0;
     public static int SEEKRANGE = 0;
     public static int GOP = 0;
     public static double QUALITY = 0.00;
@@ -459,12 +460,18 @@ public class Main extends Application {
                 String[] tileData = value.split(",");
                 if (tileData.length == 1) {
                     if (isNumeric(value)) {
-                        NTILES = Integer.parseInt(value);
-
-                        System.out.println("nTiles: " + NTILES);
+                        NTILESY = Integer.parseInt(value);
+                        NTILESX =  NTILESY;
+                    } else {
+                        printError("Parametro erroneo");
                     }
                 } else if (tileData.length == 2) {
-
+                    if (isNumeric(tileData[0]) && isNumeric(tileData[1])) {
+                        NTILESY = Integer.parseInt(tileData[0]);
+                        NTILESX = Integer.parseInt(tileData[1]);
+                    } else {
+                        printError("Parametro erroneo");
+                    }
                 } else {
                     printError("Parametro erroneo");
                 }

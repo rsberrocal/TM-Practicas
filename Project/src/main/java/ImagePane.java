@@ -265,7 +265,7 @@ public class ImagePane extends GridPane implements Initializable {
         edgeDCheck.setDisable(true);
         averagingCheck.setSelected(Main.hasAveraging);
         averagingCheck.setDisable(true);
-        nTilesValue.setText(String.valueOf(Main.NTILES));
+        nTilesValue.setText(String.valueOf(Main.NTILESY));
         seekRangeValue.setText(String.valueOf(Main.SEEKRANGE));
         GOPValue.setText(String.valueOf(Main.GOP));
         QualityValue.setText(String.valueOf(Main.QUALITY));
@@ -291,7 +291,7 @@ public class ImagePane extends GridPane implements Initializable {
             if (aux == Main.GOP) {
                 aux = 1;
             } else {
-                Pair<BufferedImage, ArrayList<ArrayList<Pair<Integer, Integer>>>> res = Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, 8, 8, 0.06);
+                Pair<BufferedImage, ArrayList<ArrayList<Pair<Integer, Integer>>>> res = Encoder.encode(imagesBuffered.get(i), imagesBuffered.get(i - aux), 0, Main.NTILESX, Main.NTILESY, Main.QUALITY);
                 imagesBuffered.set(i, res.getValue0());
                 tilesInfo.addAll(res.getValue1());
                 aux++;
@@ -351,8 +351,8 @@ public class ImagePane extends GridPane implements Initializable {
                     for (Pair<Integer, Integer> p : listTilesInfo.get(i)) {
                         int x = p.getValue0();
                         int y = p.getValue1();
-                        for (int auxX = x; auxX < x + (width / Main.NTILES); auxX++) {
-                            for (int auxY = y; auxY < y + (height / Main.NTILES); auxY++) {
+                        for (int auxX = x; auxX < x + (width / Main.NTILESX); auxX++) {
+                            for (int auxY = y; auxY < y + (height / Main.NTILESY); auxY++) {
                                 newImg.setRGB(auxX, auxY, imagesBuffered.get(i).getRGB(auxX, auxY));
                             }
                         }
