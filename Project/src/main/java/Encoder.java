@@ -67,20 +67,20 @@ public class Encoder {
         return new Color(r, g, b);
     }
 
-    public static Pair<BufferedImage, ArrayList<Pair<Integer, Integer>>> encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, double quality) {
+    public static Pair<BufferedImage, ArrayList<ArrayList<Pair<Integer, Integer>>>> encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, double quality) {
         boolean found = false;
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesInput = getTiles(input, blockSizeX, blockSizeY);
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesCompare = getTiles(imageCompare, blockSizeX, blockSizeY);
         ArrayList<ArrayList<Pair<Integer, Integer>>> tileInfo = new ArrayList<>();
-        ArrayList<Pair<Integer, Integer>> tilesValues = new ArrayList<>();
         BufferedImage result = input;
 
         for (Triplet<BufferedImage, Integer, Integer> tileInput : tilesInput) {
+            ArrayList<Pair<Integer, Integer>> tilesValues = new ArrayList<>();
             for (Triplet<BufferedImage, Integer, Integer> tileCompare : tilesCompare) {
                 double comp = compareImages(tileInput.getValue0(), tileCompare.getValue0());
                 if (compareImages(tileInput.getValue0(), tileCompare.getValue0()) < quality) {
-                    for (int i = tileInput.getValue1(); i < tileInput.getValue1() + blockSizeX; i++){
-                        for (int j = tileInput.getValue2(); i < tileInput.getValue2() + blockSizeY; i++){
+                    for (int i = tileInput.getValue1(); i < tileInput.getValue1() + blockSizeX; i++) {
+                        for (int j = tileInput.getValue2(); i < tileInput.getValue2() + blockSizeY; i++) {
                             result.setRGB(i, j, meanValue(tileInput.getValue0()).getRGB());
                         }
                     }
@@ -90,11 +90,12 @@ public class Encoder {
                     break;
                 }
             }
+            tileInfo.add(tilesValues);
             /*if (found){
                 break;
             }*/
         }
 
-        return Pair.with(result, tilesValues);
+        return Pair.with(result, tileInfo);
     }
 }

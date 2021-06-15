@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
 import javafx.application.Platform;
 
 public class Main extends Application {
@@ -246,7 +247,7 @@ public class Main extends Application {
                 String frames = params.get(dataIdx);
                 if (isNumeric(frames)) {
                     FPS = Integer.parseInt(frames);
-                    System.out.println("Fps maximos: "+FPS);
+                    System.out.println("Fps maximos: " + FPS);
                 } else {
                     printError("Parametro erroneo");
                 }
@@ -428,7 +429,7 @@ public class Main extends Application {
             setQuality();
         }
 
-        if (params.contains("--batch")|| params.contains("-b")) {
+        if (params.contains("--batch") || params.contains("-b")) {
             setBatch();
         }
 
@@ -445,7 +446,7 @@ public class Main extends Application {
     }
 
     private void setNTiles() {
-        int index = params.indexOf("--saturacion");
+        int index = params.indexOf("--nTiles");
         if (index == -1) {
             printError("No se ha encotrado el parametro");
         } else {
@@ -455,13 +456,17 @@ public class Main extends Application {
                 printError("No se ha encotrado el parametro");
             } else {
                 String value = params.get(dataIdx);
-                if (isNumeric(value)) {
-                    NTILES = Integer.parseInt(value);
+                String[] tileData = value.split(",");
+                if (tileData.length == 1) {
+                    if (isNumeric(value)) {
+                        NTILES = Integer.parseInt(value);
 
-                    System.out.println("nTiles: "+NTILES);
+                        System.out.println("nTiles: " + NTILES);
+                    }
+                } else if (tileData.length == 2) {
+
                 } else {
                     printError("Parametro erroneo");
-
                 }
             }
         }
@@ -481,7 +486,7 @@ public class Main extends Application {
                 if (isNumeric(value)) {
                     SEEKRANGE = Integer.parseInt(value);
 
-                    System.out.println("seekRange: "+ SEEKRANGE);
+                    System.out.println("seekRange: " + SEEKRANGE);
                 } else {
                     printError("Parametro erroneo");
 
@@ -504,7 +509,7 @@ public class Main extends Application {
                 if (isNumeric(value)) {
                     GOP = Integer.parseInt(value);
 
-                    System.out.println("GOP: "+GOP);
+                    System.out.println("GOP: " + GOP);
                 } else {
                     printError("Parametro erroneo");
 
@@ -527,7 +532,7 @@ public class Main extends Application {
                 if (isNumeric(value)) {
                     QUALITY = Double.parseDouble(value);
 
-                    System.out.println("Quality: "+QUALITY);
+                    System.out.println("Quality: " + QUALITY);
                 } else {
                     printError("Parametro erroneo");
 
