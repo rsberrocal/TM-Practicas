@@ -329,11 +329,6 @@ public class ImagePane extends GridPane implements Initializable {
      * @return la imagen modificada
      */
     public BufferedImage filtreAveraging(BufferedImage imatge, int avNum) {
-        // Mitja R, G, B
-        Color[] mitjaColor = new Color[3];
-        // Creació de la tesela a on podrem modificar els pixels
-        WritableRaster raster = imatge.copyData(null);
-        WritableRaster tesela = raster.createWritableChild(imatge.getMinX(), imatge.getMinY(), imatge.getWidth(), imatge.getHeight(), 0, 0, null);
         for (int x = 0; x < imatge.getWidth() - 1; x++) {
             for (int y = 0; y < imatge.getHeight() - 1; y++) { // x i y de la imatge
                 int r = 0, g = 0, b = 0, a = 0;
