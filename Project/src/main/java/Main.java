@@ -563,7 +563,7 @@ public class Main extends Application {
             System.out.println("exit");
             System.exit(0);
         });
-        primaryStage.setTitle("TITULO");
+        primaryStage.setTitle("(´-﹏-`；)");
         primaryStage.show();
     }
 
