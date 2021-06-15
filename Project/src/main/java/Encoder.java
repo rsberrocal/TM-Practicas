@@ -68,10 +68,10 @@ public class Encoder {
     }
 
     public static Pair<BufferedImage, ArrayList<Pair<Integer, Integer>>> encode(BufferedImage input, BufferedImage imageCompare, int seekRange, int blockSizeX, int blockSizeY, double quality) {
-        System.out.println("Encoding image");
         boolean found = false;
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesInput = getTiles(input, blockSizeX, blockSizeY);
         ArrayList<Triplet<BufferedImage, Integer, Integer>> tilesCompare = getTiles(imageCompare, blockSizeX, blockSizeY);
+        ArrayList<ArrayList<Pair<Integer, Integer>>> tileInfo = new ArrayList<>();
         ArrayList<Pair<Integer, Integer>> tilesValues = new ArrayList<>();
         BufferedImage result = input;
 
