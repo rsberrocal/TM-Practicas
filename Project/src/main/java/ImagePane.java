@@ -341,7 +341,6 @@ public class ImagePane extends GridPane implements Initializable {
             reader = new BufferedReader(f);
             String line = reader.readLine();
             while (line != null) {
-                System.out.println(res.size());
                 // read next line
                 line = reader.readLine();
                 if (line != null) {
@@ -382,8 +381,22 @@ public class ImagePane extends GridPane implements Initializable {
                     for (Pair<Integer, Integer> p : listTilesInfo.get(i/Main.GOP)) {
                         int x = p.getValue0();
                         int y = p.getValue1();
-                        for (int auxX = x; auxX < x + (width / Main.NTILESX); auxX++) {
-                            for (int auxY = y; auxY < y + (height / Main.NTILESY); auxY++) {
+                        int maxX = x + (width / Main.NTILESX);
+                        if (maxX > width){
+                            maxX =  width;
+                        }
+                        int maxY = y + (height / Main.NTILESY);
+                        if (maxY > height){
+                            maxY =  height;
+                        }
+                        for (int auxX = x; auxX < maxX; auxX++) {
+                            for (int auxY = y; auxY < maxY; auxY++) {
+                                if (auxX == 320 && auxY == 0){
+                                    System.out.println("AQUI");
+                                }
+                                System.out.println("coords");
+                                System.out.println(auxX);
+                                System.out.println(auxY);
                                 newImg.setRGB(auxX, auxY, imagesBuffered.get(i).getRGB(auxX, auxY));
                             }
                         }
@@ -401,7 +414,7 @@ public class ImagePane extends GridPane implements Initializable {
             }
         }
         long endDecode = System.currentTimeMillis() - startDecode;
-        System.out.println("Encoded all at " + endDecode + " ms");
+        System.out.println("Decoded all at " + endDecode + " ms");
     }
 
     /**
