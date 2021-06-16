@@ -91,6 +91,7 @@ public class Encoder {
                 }
             }
             tileInfo.add(tilesValues);
+            // Con estas 3 lineas va el triple de rapido
             /*if (found){
                 break;
             }*/

@@ -69,7 +69,9 @@ public class ImagePane extends GridPane implements Initializable {
     public Label fpsValue;
 
     @FXML
-    public Label nTilesValue;
+    public Label nTilesXValue;
+    @FXML
+    public Label nTilesYValue;
 
     @FXML
     public Label seekRangeValue;
@@ -85,6 +87,8 @@ public class ImagePane extends GridPane implements Initializable {
 
     public static Map<String, BufferedImage> imatgesMap = new HashMap<>();
     public ArrayList<BufferedImage> imagesBuffered;
+    public ArrayList<BufferedImage> imagesBufferedDecode;
+    public ArrayList<BufferedImage> imagesBufferedNoDecode;
     public ArrayList<File> images;
     private ArrayList<ArrayList<Pair<Integer, Integer>>> listTilesInfo;
     private File tileInfo;
@@ -138,6 +142,9 @@ public class ImagePane extends GridPane implements Initializable {
             zis.closeEntry();
             zis.close();
             fis.close();
+            if (Main.status == 3) {
+                this.imagesBufferedNoDecode = this.imagesBuffered;
+            }
             System.out.println("Final Unzipping");
         } catch (IOException e) {
             e.printStackTrace();
@@ -237,10 +244,13 @@ public class ImagePane extends GridPane implements Initializable {
                         int finalI = i;
                         Platform.runLater(() -> {
 
-                            imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null));
+
                             if (Main.status == 3) {
                                 //PONER LAS IMAGENES DEL DECODE!
-                                imageContainer2.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null));
+                                imageContainer.setImage(SwingFXUtils.toFXImage(imagesBufferedNoDecode.get(finalI), null));
+                                imageContainer2.setImage(SwingFXUtils.toFXImage(imagesBufferedDecode.get(finalI), null));
+                            } else {
+                                imageContainer.setImage(SwingFXUtils.toFXImage(imagesBuffered.get(finalI), null));
                             }
                         });
                         try {
@@ -275,7 +285,8 @@ public class ImagePane extends GridPane implements Initializable {
         edgeDCheck.setDisable(true);
         averagingCheck.setSelected(Main.hasAveraging);
         averagingCheck.setDisable(true);
-        nTilesValue.setText(String.valueOf(Main.NTILESY));
+        nTilesXValue.setText(String.valueOf(Main.NTILESX));
+        nTilesYValue.setText(String.valueOf(Main.NTILESY));
         seekRangeValue.setText(String.valueOf(Main.SEEKRANGE));
         GOPValue.setText(String.valueOf(Main.GOP));
         QualityValue.setText(String.valueOf(Main.QUALITY));
@@ -307,6 +318,10 @@ public class ImagePane extends GridPane implements Initializable {
                 aux++;
             }
         }
+        for (int i = 0; i < imagesBuffered.size(); i++) {
+            imagesBuffered.set(i, filtreAveraging(imagesBuffered.get(i), Main.avaragingValue));
+        }
+
         listTilesInfo = tilesInfo;
         long endEncode = System.currentTimeMillis() - startEncode;
         System.out.println("Encoded all at " + endEncode + " ms");
@@ -350,11 +365,15 @@ public class ImagePane extends GridPane implements Initializable {
         }
         int width = imagesBuffered.get(0).getWidth();
         int height = imagesBuffered.get(0).getHeight();
+        if (Main.status == 3) {
+            imagesBufferedDecode = new ArrayList<>();
+            imagesBufferedDecode.add(imagesBuffered.get(0));
+        }
         for (int i = 1; i < imagesBuffered.size(); i++) {
             if (i % Main.GOP != 0) {
                 BufferedImage newImg = imagesBuffered.get(i);
-                for (int k = 0; k < listTilesInfo.get(i).size(); k++) {
-                    for (Pair<Integer, Integer> p : listTilesInfo.get(i)) {
+                for (int k = 0; k < listTilesInfo.get(i/Main.GOP).size(); k++) {
+                    for (Pair<Integer, Integer> p : listTilesInfo.get(i/Main.GOP)) {
                         int x = p.getValue0();
                         int y = p.getValue1();
                         for (int auxX = x; auxX < x + (width / Main.NTILESX); auxX++) {
@@ -364,7 +383,15 @@ public class ImagePane extends GridPane implements Initializable {
                         }
                     }
                 }
-                imagesBuffered.set(i, newImg);
+                if (Main.status == 3) {
+                    imagesBufferedDecode.add(imagesBuffered.get(i));
+                } else {
+                    imagesBuffered.set(i, newImg);
+                }
+            } else {
+                if (Main.status == 3) {
+                    imagesBufferedDecode.add(imagesBuffered.get(i));
+                }
             }
         }
         long endDecode = System.currentTimeMillis() - startDecode;
