@@ -391,12 +391,6 @@ public class ImagePane extends GridPane implements Initializable {
                         }
                         for (int auxX = x; auxX < maxX; auxX++) {
                             for (int auxY = y; auxY < maxY; auxY++) {
-                                if (auxX == 320 && auxY == 0){
-                                    System.out.println("AQUI");
-                                }
-                                System.out.println("coords");
-                                System.out.println(auxX);
-                                System.out.println(auxY);
                                 newImg.setRGB(auxX, auxY, imagesBuffered.get(i).getRGB(auxX, auxY));
                             }
                         }
