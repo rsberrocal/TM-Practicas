@@ -31,7 +31,7 @@ public class Main extends Application {
     public static boolean hasEdgeDetection = false;
     public static boolean hasSaturation = false;
     public static boolean hasBatch = false;
-    public static String output = "output.zip";
+    public static String output = "output";
 
     public static int FPS = 24;
     public static int EDGEDETECTH = 0;
@@ -101,13 +101,8 @@ public class Main extends Application {
         if (!params.get(dataIdx).contains("-") || !params.get(dataIdx).contains("--")) {
             // Escogemos el valor
             String data = params.get(dataIdx);
-            // Miramos si es un zip
-            if (isZip(data)) {
-                input = params.get(dataIdx);
-                hasInput = true;
-            } else {
-                printError("El parametro no es correcto");
-            }
+            input = params.get(dataIdx);
+            hasInput = true;
         } else {
             printError("El parametro no es correcto");
         }

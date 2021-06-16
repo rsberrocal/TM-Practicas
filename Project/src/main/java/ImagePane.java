@@ -109,8 +109,8 @@ public class ImagePane extends GridPane implements Initializable {
             byte[] buffer = new byte[1024];
             long startUnzipping = System.currentTimeMillis();
             long bytes = oGZip.length();
-            System.out.println("Input Zip size: " + bytes +" bytes");
-            System.out.println("Input Zip size: " + bytes/1024 +" KB");
+            System.out.println("Input Zip size: " + bytes + " bytes");
+            System.out.println("Input Zip size: " + bytes / 1024 + " KB");
             System.out.println("Inicio de Unzipping");
             while (zipEntry != null) {
                 String name = zipEntry.getName();
@@ -184,7 +184,7 @@ public class ImagePane extends GridPane implements Initializable {
     public void saveOnZip() {
         // Create zip with output
         long startZip = System.currentTimeMillis();
-        File newZip = new File(Main.output);
+        File newZip = new File(Main.output + ".RTTT");
         try {
             FileOutputStream fos = new FileOutputStream(newZip);
             ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
@@ -229,8 +229,8 @@ public class ImagePane extends GridPane implements Initializable {
             long endZip = System.currentTimeMillis() - startZip;
             System.out.println("All saved at " + endZip + "ms");
             long bytes = newZip.length();
-            System.out.println("Zip saved size: " + bytes +" bytes");
-            System.out.println("Zip saved size: " + bytes/1024 +" KB");
+            System.out.println("Zip saved size: " + bytes + " bytes");
+            System.out.println("Zip saved size: " + bytes / 1024 + " KB");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -377,17 +377,17 @@ public class ImagePane extends GridPane implements Initializable {
         for (int i = 1; i < imagesBuffered.size(); i++) {
             if (i % Main.GOP != 0) {
                 BufferedImage newImg = imagesBuffered.get(i);
-                for (int k = 0; k < listTilesInfo.get(i/Main.GOP).size(); k++) {
-                    for (Pair<Integer, Integer> p : listTilesInfo.get(i/Main.GOP)) {
+                for (int k = 0; k < listTilesInfo.get(i / Main.GOP).size(); k++) {
+                    for (Pair<Integer, Integer> p : listTilesInfo.get(i / Main.GOP)) {
                         int x = p.getValue0();
                         int y = p.getValue1();
                         int maxX = x + (width / Main.NTILESX);
-                        if (maxX > width){
-                            maxX =  width;
+                        if (maxX > width) {
+                            maxX = width;
                         }
                         int maxY = y + (height / Main.NTILESY);
-                        if (maxY > height){
-                            maxY =  height;
+                        if (maxY > height) {
+                            maxY = height;
                         }
                         for (int auxX = x; auxX < maxX; auxX++) {
                             for (int auxY = y; auxY < maxY; auxY++) {
@@ -512,9 +512,9 @@ public class ImagePane extends GridPane implements Initializable {
                 int blue = colorP.getBlue(); //B
                 mitja = (red + green + blue) / 3; // extreu la mitja dels tres canals del pixel
                 if (mitja <= binNum) { // en cas que la mitja sigui menor o igual al threshold:
-                    imatge.setRGB(x,y, ((0 << 24) | (0 << 16) | (0 << 8) | (0))); // seteja els pixels amb negre
+                    imatge.setRGB(x, y, ((0 << 24) | (0 << 16) | (0 << 8) | (0))); // seteja els pixels amb negre
                 } else {
-                    imatge.setRGB(x,y, (255 << 24) | (255 << 16) | (255 << 8) | (255));  // seteja els pixels amb blanc
+                    imatge.setRGB(x, y, (255 << 24) | (255 << 16) | (255 << 8) | (255));  // seteja els pixels amb blanc
                 }
             }
         }
@@ -605,7 +605,7 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     private void setFilters() {
-        if(Main.hasEdgeDetection||Main.hasSaturation||Main.hasNegative||Main.hasAveraging||Main.hasBinarisation){
+        if (Main.hasEdgeDetection || Main.hasSaturation || Main.hasNegative || Main.hasAveraging || Main.hasBinarisation) {
             System.out.println("Starting Filtering...");
             long startFiltering = System.currentTimeMillis();
             for (int i = 0; i < imagesBuffered.size(); i++) {
