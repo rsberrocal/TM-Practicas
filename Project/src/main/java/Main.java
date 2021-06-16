@@ -50,7 +50,7 @@ public class Main extends Application {
     public static int NTILESX = 8;
     public static int NTILESY = 8;
     public static int SEEKRANGE = 0;
-    public static int GOP = 1;
+    public static int GOP = 2;
     public static double QUALITY = 0.4;
 
     final static int WIDTH = 600;
