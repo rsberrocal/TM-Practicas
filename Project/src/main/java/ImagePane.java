@@ -100,6 +100,7 @@ public class ImagePane extends GridPane implements Initializable {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        File oGZip = new File(inputTxt.getText());
         try {
             FileInputStream fis = new FileInputStream(inputTxt.getText());
             ZipInputStream zis = new ZipInputStream(fis);
@@ -107,7 +108,7 @@ public class ImagePane extends GridPane implements Initializable {
             //buffer for read and write data to file
             byte[] buffer = new byte[1024];
             long startUnzipping = System.currentTimeMillis();
-            long bytes = dir.length();
+            long bytes = oGZip.length();
             System.out.println("Input Zip size: " + bytes +" bytes");
             System.out.println("Input Zip size: " + bytes/1024 +" KB");
             System.out.println("Inicio de Unzipping");
