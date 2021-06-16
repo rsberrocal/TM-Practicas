@@ -184,7 +184,7 @@ public class ImagePane extends GridPane implements Initializable {
     public void saveOnZip() {
         // Create zip with output
         long startZip = System.currentTimeMillis();
-        File newZip = new File(Main.output + ".RTTT");
+        File newZip = new File(Main.output + ".zip");
         try {
             FileOutputStream fos = new FileOutputStream(newZip);
             ZipOutputStream zipOutputStream = new ZipOutputStream(fos);

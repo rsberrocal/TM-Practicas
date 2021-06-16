@@ -1,12 +1,19 @@
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class Main extends Application {
 
@@ -103,9 +110,84 @@ public class Main extends Application {
             String data = params.get(dataIdx);
             input = params.get(dataIdx);
             hasInput = true;
+            convertFormat();
+            input = "raw.zip";
+
+
         } else {
             printError("El parametro no es correcto");
         }
+    }
+
+    public static void convertFormat(){
+        ArrayList<String> nombres = new ArrayList<>();
+        //ImageIO.write(img, "jpeg", zipOutputStream);
+        //CREAR ZIP CON JPEGS DENTRO PNG -> JPEG
+        //abrir el zip input,
+        ArrayList<BufferedImage> tmp = new ArrayList<>();
+        File dir = new File("output/raw/");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File oGZip = new File(input);
+        try {
+            FileInputStream fis = new FileInputStream(input);
+            ZipInputStream zis = new ZipInputStream(fis);
+            ZipEntry zipEntry = zis.getNextEntry();
+            byte[] buffer = new byte[1024];
+            while (zipEntry != null) {
+                String name = zipEntry.getName();
+                if (!zipEntry.isDirectory()) {
+                    File newFile = new File("output/raw/" + File.separator + name);
+                    new File(newFile.getParent()).mkdirs();
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                    Image image = new Image(newFile.toURI().toString());
+                    BufferedImage imatgeModi = SwingFXUtils.fromFXImage(image, null);
+                    tmp.add(imatgeModi);
+                    nombres.add(newFile.getName());
+
+                }
+                zis.closeEntry();
+                zipEntry = zis.getNextEntry();
+            }
+            zis.closeEntry();
+            zis.close();
+            fis.close();
+
+            File newZip = new File("raw.zip");
+
+            FileOutputStream fos = new FileOutputStream(newZip);
+            ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
+
+            System.out.println("Saving on zip... raw.zip");
+            int i = 0;
+            for (BufferedImage img : tmp) {
+                String name = getName(nombres.get(i)) + ".jpeg";
+                ZipEntry entry = new ZipEntry(name);
+                zipOutputStream.putNextEntry(entry);
+                ImageIO.write(img, "jpeg", zipOutputStream);
+                i++;
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static String getName(String file) {
+        String fileName = "";
+        fileName = file.replaceFirst("[.][^.]+$", ""); // Remove the extension
+
+        return fileName;
     }
 
     /**
