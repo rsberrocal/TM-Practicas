@@ -110,14 +110,15 @@ public class Encoder {
         ArrayList<ArrayList<Pair<Integer, Integer>>> tileInfo = new ArrayList<>();
         // Resultado
         BufferedImage result = input;
-        int matches = 0;
+        //int matches = 0;
         // Iteramos todos los tiles de las dos imagenes
         for (Triplet<BufferedImage, Integer, Integer> tileInput : tilesInput) {
             ArrayList<Pair<Integer, Integer>> tilesValues = new ArrayList<>();
             for (Triplet<BufferedImage, Integer, Integer> tileCompare : tilesCompare) {
                 // Si la comparacion es menor que la calidad, tenemos un match
                 if (compareImages(tileInput.getValue0(), tileCompare.getValue0()) < quality) {
-                    matches++;
+                    //matches++;
+
                     // Iteramos por todoo el tile para poner el valor medio
                     int val = meanValue(tileInput.getValue0()).getRGB();
                     for (int i = tileInput.getValue1(); i < tileInput.getValue1() + blockSizeX; i++) {
@@ -132,6 +133,7 @@ public class Encoder {
                     break;// salimos del bucle
                 }
             }
+
             //Añadimos la info
             tileInfo.add(tilesValues);
             // Con estas 3 lineas va el triple de rapido
@@ -139,6 +141,7 @@ public class Encoder {
                 break;
             }*/
         }
+        //System.out.println(matches);
         // Devolvemos una tupla con la imagen y con la informacion del tile
         return Pair.with(result, tileInfo);
     }

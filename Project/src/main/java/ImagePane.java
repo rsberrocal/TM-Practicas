@@ -12,9 +12,7 @@ import org.javatuples.Pair;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -323,9 +321,9 @@ public class ImagePane extends GridPane implements Initializable {
                 aux++;
             }
         }
-        for (int i = 0; i < imagesBuffered.size(); i++) {
-            imagesBuffered.set(i, filtreAveraging(imagesBuffered.get(i), Main.avaragingValue));
-        }
+        //for (int i = 0; i < imagesBuffered.size(); i++) {
+        //    imagesBuffered.set(i, filtreAveraging(imagesBuffered.get(i), Main.avaragingValue));
+        //}
 
         listTilesInfo = tilesInfo;
         long endEncode = System.currentTimeMillis() - startEncode;
@@ -464,33 +462,21 @@ public class ImagePane extends GridPane implements Initializable {
      * Aplica el filtro de la media para hacer que se vea mas suave
      *
      * @param imatge la imagen que sera modificada
-     * @param avNum  numero de caselles al voltant per fer la mitja
+     * @param avNum  dimensio a fer la matriu avNum x avNum
      * @return la imagen modificada
      */
     public BufferedImage filtreAveraging(BufferedImage imatge, int avNum) {
-        for (int x = 0; x < imatge.getWidth() - 1; x++) {
-            for (int y = 0; y < imatge.getHeight() - 1; y++) { // x i y de la imatge
-                int r = 0, g = 0, b = 0, a = 0;
-                // utilitzem l'average number per la finestra interior
-                for (int t = -avNum; t <= avNum; t++) {
-                    for (int z = -avNum; z <= avNum; z++) {
-                        // t i z serviran de coordenades a dins de la finestra, pero abans hem de comprovar que la finestra no estigui fora del limit imatge
-                        if ((y + (t) < imatge.getHeight()) && (x + (z) < imatge.getWidth()) && (y + (t) >= 0) && (x + (z) >= 0)) {
-                            Color colorP = new Color(imatge.getRGB(x, y));
-                            a += colorP.getAlpha();
-                            r += colorP.getRed();
-                            g += colorP.getGreen();
-                            b += colorP.getBlue();
-                        }
-                    }
-                }
-                int espai = (avNum - (-avNum) + 1) * (avNum - (-avNum) + 1);
-                // calcula els nous valors a traves de fer la mitja amb els valors del voltant entre el numero d'espais
-                imatge.setRGB(x, y, ((a / espai) << 24) | ((r / espai) << 16) | ((g / espai) << 8) | (b / espai));
-            }
-        }
-        return imatge;
+        float[] filtmat = new float[avNum*avNum]; // Simularem a una llista una matriu de dimensio avNum x avNum
+        Arrays.fill(filtmat, 1.f/(avNum*avNum)); // ompla la llista de 1/la dimensio de la matiu
+        ConvolveOp smoth = new ConvolveOp(new Kernel(avNum,avNum, filtmat),ConvolveOp.EDGE_NO_OP,null);
+        // creem una buffer image buida
+        BufferedImage imatgeResult = new BufferedImage(imatge.getWidth(),imatge.getHeight(),BufferedImage.TYPE_INT_RGB);
+        smoth.filter(imatge,imatgeResult); //farem la convolució a través de la matriu i retorna el
+                                    // resultat a imatgeResult, que ja és el resultat de la multiplicació de la matriu
+                                    // sobre la nostre imatge
+        return imatgeResult;
     }
+
 
     /**
      * Dependiendo del parametro el pixel serà o negro o blanco
