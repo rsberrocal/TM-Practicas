@@ -106,6 +106,10 @@ public class ImagePane extends GridPane implements Initializable {
             ZipEntry zipEntry = zis.getNextEntry();
             //buffer for read and write data to file
             byte[] buffer = new byte[1024];
+            long startUnzipping = System.currentTimeMillis();
+            long bytes = dir.length();
+            System.out.println("Input Zip size: " + bytes +" bytes");
+            System.out.println("Input Zip size: " + bytes/1024 +" KB");
             System.out.println("Inicio de Unzipping");
             while (zipEntry != null) {
                 String name = zipEntry.getName();
@@ -146,6 +150,8 @@ public class ImagePane extends GridPane implements Initializable {
                 this.imagesBufferedNoDecode = this.imagesBuffered;
             }
             System.out.println("Final Unzipping");
+            long endUnzipping = System.currentTimeMillis() - startUnzipping;
+            System.out.println("Unzipping at: " + endUnzipping + "ms");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -244,7 +250,6 @@ public class ImagePane extends GridPane implements Initializable {
                         int finalI = i;
                         Platform.runLater(() -> {
 
-
                             if (Main.status == 3) {
                                 //PONER LAS IMAGENES DEL DECODE!
                                 imageContainer.setImage(SwingFXUtils.toFXImage(imagesBufferedNoDecode.get(finalI), null));
@@ -260,7 +265,7 @@ public class ImagePane extends GridPane implements Initializable {
                             e.printStackTrace();
                         }
                         if (i == imagesBuffered.size() - 1) {
-                            i = 0;                          // nonstop
+                            i = 0;                          // Fa que no es pari de reproduir
                         }
                     }
                 }
@@ -271,7 +276,7 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     public void changeFilterView() {
-        encodeCheck.setSelected(Main.hasNegative);
+        encodeCheck.setSelected(Main.hasNegative); //SETEJA TOTES LES COMPONENTS DE LA DRETA
         encodeCheck.setDisable(true);
         decodeCheck.setSelected(Main.hasNegative);
         decodeCheck.setDisable(true);
@@ -400,6 +405,7 @@ public class ImagePane extends GridPane implements Initializable {
 
     /**
      * Una vez selecionada una imagen le añadiremos los filtros dependiendo de cuales tenga.
+     * Vamos sobreescribiendo las imagenes post-filtro asi podemos aplicar filtro encima de otros.
      *
      * @param a la imagen que sera modificada
      * @return la imagen ya modificada
@@ -554,7 +560,7 @@ public class ImagePane extends GridPane implements Initializable {
      *
      * @param imatge es la imagen que queremos modificar
      * @param s      es el porcentage de saturacion
-     * @return
+     * @return la imagen modificada
      */
     public BufferedImage filtreSaturacio(BufferedImage imatge, double s) {
         WritableRaster raster = imatge.getRaster();
@@ -600,6 +606,7 @@ public class ImagePane extends GridPane implements Initializable {
             for (int i = 0; i < imagesBuffered.size(); i++) {
                 this.imagesBuffered.set(i, this.seleccioFiltres(imagesBuffered.get(i)));
             }
+            System.out.println("End Filtering");
             long endFiltering = System.currentTimeMillis() - startFiltering;
             System.out.println("Filtering all at " + endFiltering + " ms");
         }
