@@ -214,6 +214,10 @@ public class ImagePane extends GridPane implements Initializable {
 
             long endZip = System.currentTimeMillis() - startZip;
             System.out.println("All saved at " + endZip + "ms");
+            long bytes = newZip.length();
+            System.out.println("Zip saved size: " + bytes +" bytes");
+            System.out.println("Zip saved size: " + bytes/1024 +" KB");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -456,33 +460,25 @@ public class ImagePane extends GridPane implements Initializable {
      * @return imagen modificada
      */
     public BufferedImage filtreBinarisation(BufferedImage imatge, int binNum) {
-        // Creació de la tesela a on podrem modificar els pixels
-        WritableRaster raster = imatge.copyData(null);
-        WritableRaster tesela = raster.createWritableChild(imatge.getMinX(), imatge.getMinY(), imatge.getWidth(), imatge.getHeight(), 0, 0, null);
-
-        // RGB per cada dos colors
-        int[] black = {0, 0, 0};
-        int[] white = {255, 255, 255};
         // Aquesta variable sera la mitja de cada pixel per decidir si és blanc o negre
         double mitja = 0;
 
         for (int x = 0; x < imatge.getWidth(); x++) {
             for (int y = 0; y < imatge.getHeight(); y++) {
-                Color colorP = new Color(imatge.getRGB(x, y));
-                int red = colorP.getRed();
-                int green = colorP.getGreen();
-                int blue = colorP.getBlue();
-                mitja = (red + green + blue) / 3; // extreu la mitja
-                if (mitja <= binNum) {
-                    raster.setPixel(x, y, black); // seteja els pixels amb negre
+                Color colorP = new Color(imatge.getRGB(x, y)); //extreu el rgb del pixel en el que estem
+                int red = colorP.getRed(); //R
+                int green = colorP.getGreen(); //G
+                int blue = colorP.getBlue(); //B
+                mitja = (red + green + blue) / 3; // extreu la mitja dels tres canals del pixel
+                if (mitja <= binNum) { // en cas que la mitja sigui menor o igual al threshold:
+                    imatge.setRGB(x,y, ((0 << 24) | (0 << 16) | (0 << 8) | (0))); // seteja els pixels amb negre
                 } else {
-                    raster.setPixel(x, y, white); // seteja els pixels amb blanc
+                    imatge.setRGB(x,y, (255 << 24) | (255 << 16) | (255 << 8) | (255));  // seteja els pixels amb blanc
                 }
             }
         }
-        //Create the binarized image and return it
-        BufferedImage result = new BufferedImage(imatge.getColorModel(), tesela, imatge.isAlphaPremultiplied(), null);
-        return result;
+        // retorna la imatge modificada
+        return imatge;
     }
 
     /**
@@ -571,9 +567,17 @@ public class ImagePane extends GridPane implements Initializable {
     }
 
     private void setFilters() {
-        for (int i = 0; i < imagesBuffered.size(); i++) {
-            this.imagesBuffered.set(i, this.seleccioFiltres(imagesBuffered.get(i)));
+        if(Main.hasEdgeDetection||Main.hasSaturation||Main.hasNegative||Main.hasAveraging||Main.hasBinarisation){
+            System.out.println("Starting Filtering...");
+            long startFiltering = System.currentTimeMillis();
+            for (int i = 0; i < imagesBuffered.size(); i++) {
+                this.imagesBuffered.set(i, this.seleccioFiltres(imagesBuffered.get(i)));
+            }
+            long endFiltering = System.currentTimeMillis() - startFiltering;
+            System.out.println("Filtering all at " + endFiltering + " ms");
         }
+
+
     }
 
     @Override
