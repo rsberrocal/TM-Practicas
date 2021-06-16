@@ -624,6 +624,5 @@ public class ImagePane extends GridPane implements Initializable {
         changeFilterView();
         showImages();
         saveOnZip();
-        System.out.println(Main.input);
     }
 }

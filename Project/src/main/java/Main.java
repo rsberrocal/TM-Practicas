@@ -110,10 +110,6 @@ public class Main extends Application {
             String data = params.get(dataIdx);
             input = params.get(dataIdx);
             hasInput = true;
-            convertFormat();
-            input = "raw.zip";
-
-
         } else {
             printError("El parametro no es correcto");
         }
@@ -512,6 +508,11 @@ public class Main extends Application {
             status = 2;
         if (hasEncode && hasDecode)
             status = 3;
+
+        if (!hasDecode) {
+            convertFormat();
+            input = "raw.zip";
+        }
 
         // Iniciamos la app
         initApp(primaryStage);
