@@ -222,10 +222,9 @@ public class ImagePane extends GridPane implements Initializable {
                 while ((len = fis.read(buffer)) > 0) {
                     zipOutputStream.write(buffer, 0, len);
                 }
-                zipOutputStream.finish();
-                zipOutputStream.close();
             }
-
+            zipOutputStream.finish();
+            zipOutputStream.close();
             long endZip = System.currentTimeMillis() - startZip;
             System.out.println("All saved at " + endZip + "ms");
             long bytes = newZip.length();

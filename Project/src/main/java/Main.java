@@ -166,13 +166,13 @@ public class Main extends Application {
 
             System.out.println("Saving on zip... raw.zip");
             for (int i = 0; i < tmp.size(); i++) {
-                if (i == tmp.size() -1){
-                    System.out.println("asda");
-                }
+                //if (i == tmp.size() -1){
+                //    System.out.println("asda");
+                //}
                 String name = getName(nombres.get(i)) + ".jpeg";
                 ZipEntry entry = new ZipEntry(name);
                 zipOutputStream.putNextEntry(entry);
-                System.out.println(name + " img");
+                //System.out.println(name + " img");
                 ImageIO.write(tmp.get(i), "jpeg", zipOutputStream);
             }
             /* Se finaliza el stream y cierra el fichero zip */

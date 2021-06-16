@@ -116,7 +116,7 @@ public class Encoder {
             for (Triplet<BufferedImage, Integer, Integer> tileCompare : tilesCompare) {
                 // Si la comparacion es menor que la calidad, tenemos un match
                 if (compareImages(tileInput.getValue0(), tileCompare.getValue0()) < quality) {
-                    // Iteramos por todo el tile para poner el valor medio
+                    // Iteramos por todoo el tile para poner el valor medio
                     int val = meanValue(tileInput.getValue0()).getRGB();
                     for (int i = tileInput.getValue1(); i < tileInput.getValue1() + blockSizeX; i++) {
                         for (int j = tileInput.getValue2(); i < tileInput.getValue2() + blockSizeY; i++) {
