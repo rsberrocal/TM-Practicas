@@ -61,11 +61,8 @@ public class Encoder {
         double g2 = ((rgb2 >> 8) & 0xFF) / 255.0;
         double b1 = (rgb1 & 0xFF) / 255.0;
         double b2 = (rgb2 & 0xFF) / 255.0;
-        double a1 = ((rgb1 >> 24) & 0xFF) / 255.0;
-        double a2 = ((rgb2 >> 24) & 0xFF) / 255.0;
 
-        // Si hay transparencia, los valores alpha haran una diferencia, en caso de tener un png
-        return a1 * a2 * Math.sqrt((r1 - r2) * (r1 - r2) + (g1 - g2) * (g1 - g2) + (b1 - b2) * (b1 - b2));
+        return Math.sqrt((r1 - r2) * (r1 - r2) + (g1 - g2) * (g1 - g2) + (b1 - b2) * (b1 - b2));
     }
 
     /**
