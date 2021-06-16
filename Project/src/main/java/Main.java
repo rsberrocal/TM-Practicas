@@ -119,7 +119,7 @@ public class Main extends Application {
         }
     }
 
-    public static void convertFormat(){
+    public static void convertFormat() {
         ArrayList<String> nombres = new ArrayList<>();
         //ImageIO.write(img, "jpeg", zipOutputStream);
         //CREAR ZIP CON JPEGS DENTRO PNG -> JPEG
@@ -165,18 +165,19 @@ public class Main extends Application {
             ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
 
             System.out.println("Saving on zip... raw.zip");
-            int i = 0;
-            for (BufferedImage img : tmp) {
+            for (int i = 0; i < tmp.size(); i++) {
+                if (i == tmp.size() -1){
+                    System.out.println("asda");
+                }
                 String name = getName(nombres.get(i)) + ".jpeg";
                 ZipEntry entry = new ZipEntry(name);
                 zipOutputStream.putNextEntry(entry);
-                ImageIO.write(img, "jpeg", zipOutputStream);
-                i++;
+                System.out.println(name + " img");
+                ImageIO.write(tmp.get(i), "jpeg", zipOutputStream);
             }
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            /* Se finaliza el stream y cierra el fichero zip */
+            zipOutputStream.finish();
+            zipOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -192,6 +193,7 @@ public class Main extends Application {
 
     /**
      * Comprueba si es un zip
+     *
      * @param zip archivo a mirar
      * @return true al ser zip, false al no serlo
      */
@@ -202,6 +204,7 @@ public class Main extends Application {
 
     /**
      * Imprime un error por consola y detiene la ejecucion
+     *
      * @param error Mensaje de error
      */
     public void printError(String error) {
