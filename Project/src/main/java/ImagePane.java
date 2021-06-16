@@ -465,7 +465,7 @@ public class ImagePane extends GridPane implements Initializable {
      * Aplica el filtro de la media para hacer que se vea mas suave
      *
      * @param imatge la imagen que sera modificada
-     * @param avNum  el threshold de media
+     * @param avNum  numero de caselles al voltant per fer la mitja
      * @return la imagen modificada
      */
     public BufferedImage filtreAveraging(BufferedImage imatge, int avNum) {
