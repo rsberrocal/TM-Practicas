@@ -4,19 +4,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-
-import javafx.application.Platform;
 
 public class Main extends Application {
 
@@ -24,7 +14,6 @@ public class Main extends Application {
     public static int binarisationValue = 0;
     public static int avaragingValue = 0;
     public List<String> params;
-    private ArrayList<BufferedImage> raw;
 
     /*
         0 -> no encode, no decode
@@ -79,8 +68,8 @@ public class Main extends Application {
         System.out.println("Se aplica un filtro de detección de esquinas con un threshold (value)");
         System.out.println("--saturacion {value}");
         System.out.println("Se aplica un filtro de saturación, value entre 0 i 1");
-        System.out.println("--nTiles {value}");
-        System.out.println("Numero de teselas en la cual dividir la imagen.");
+        System.out.println("--nTiles {value | valueX,valueY}");
+        System.out.println("Tamaño de las teselas, si se pone solo un valor sera el mismo para X, Y");
         System.out.println("--seekRange {value}");
         System.out.println("Desplazamiento maximo en la busqueda de coincidencias");
         System.out.println("--GOP {value}");
@@ -92,7 +81,7 @@ public class Main extends Application {
         System.exit(1);
     }
 
-    public void setInput() throws Exception {
+    public void setInput() {
         // Calculamos el indice del parametro para encontrarlo
         int index = params.indexOf("-i");
         // En caso de que no este, buscamos en su alternativa
@@ -124,17 +113,29 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Comprueba si es un zip
+     * @param zip archivo a mirar
+     * @return true al ser zip, false al no serlo
+     */
     private boolean isZip(String zip) {
         Pattern pattern = Pattern.compile(".*\\.zip$");
         return pattern.matcher(zip).matches();
     }
 
+    /**
+     * Imprime un error por consola y detiene la ejecucion
+     * @param error Mensaje de error
+     */
     public void printError(String error) {
         System.err.println(error);
         System.out.println("Use -h o --help para obtener mas informacion");
         System.exit(1);
     }
 
+    /**
+     * Comprueba y pone el output del usuario
+     */
     public void setOutput() {
         // Calculamos el indice del parametro para encontrarlo
         int index = params.indexOf("-o");
@@ -151,46 +152,9 @@ public class Main extends Application {
         }
     }
 
-    // comentar
-    public static ArrayList<BufferedImage> extractArrayBImages(File zipFile) throws Exception {
-        ZipFile zip = null;
-        ArrayList<BufferedImage> images = new ArrayList<>();
-        try {
-            zip = new ZipFile(zipFile);
-        } catch (ZipException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        Enumeration<? extends ZipEntry> zipComponent = zip.entries();
-        while (zipComponent.hasMoreElements()) {
-            ZipEntry next = zipComponent.nextElement();
-            InputStream is = null;
-            try {
-                is = zip.getInputStream(next);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            ImageInputStream iis = null;
-            try {
-                iis = ImageIO.createImageInputStream(is);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            try {
-                BufferedImage bufferedImg = ImageIO.read(iis);
-                images.add(bufferedImg);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-        zip.close();
-        return images;
-    }
-
+    /**
+     * Comprueba y setea el mode Encode
+     */
     public void setEncode() {
         // Calculamos el indice del parametro para encontrarlo
         int index = params.indexOf("-e");
@@ -206,6 +170,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Comprueba y setea el mode Decode
+     */
     public void setDecode() {
         // Calculamos el indice del parametro para encontrarlo
         int index = params.indexOf("-d");
@@ -233,6 +200,9 @@ public class Main extends Application {
         return pattern.matcher(strNum).matches();
     }
 
+    /**
+     * Comprueba y setea el numero de FPS
+     */
     public void setFPS() {
         // Calculamos el indice del parametro para encontrarlo
         int index = params.indexOf("--fps");
@@ -244,7 +214,7 @@ public class Main extends Application {
             if (dataIdx > params.size() - 1) {
                 printError("No se ha encotrado el parametro");
             } else {
-                // check fps is int
+                // Miramos si es un int
                 String frames = params.get(dataIdx);
                 if (isNumeric(frames)) {
                     FPS = Integer.parseInt(frames);
@@ -256,6 +226,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Comprueba y setea el valor del filtro
+     */
     public void setBinarization() {
         // --binarization {value}
         // Filtro de binarizacion utilizando como threshold el valor indicado
@@ -277,14 +250,19 @@ public class Main extends Application {
             hasBinarisation = true;
             System.out.println("Se esta aplicando el filtro Binarisation");
         }
-
     }
 
+    /**
+     * setesa si se aplica el filtro
+     */
     public void setNegative() {
         this.hasNegative = true;
         System.out.println("Se esta aplicando el filtro Negativo");
     }
 
+    /**
+     * Comprueba y setea el valor del filtro
+     */
     public void setAveraging() {
         // --averaging {value}
         // Se aplica un filtro de mediana sobre zonas de value x value
@@ -308,6 +286,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Comprueba y setea el valor del filtro
+     */
     private void setEdgeDetection() {
         int index = params.indexOf("--edgeDetection");
         if (index == -1) {
@@ -331,6 +312,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Comprueba y setea el valor del filtro
+     */
     private void setSaturation() {
         int index = params.indexOf("--saturacion");
         if (index == -1) {
@@ -354,6 +338,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Check del modo batch
+     */
     private void setBatch() {
         hasBatch = true;
         System.out.println("No se mostrará ningun resultado (--batch/-b)");
@@ -367,13 +354,17 @@ public class Main extends Application {
             System.out.println("Faltan parametros, use -h o --help para saber que parametros usar");
             System.exit(0);
         }
+        // Recogemos los parametros
         params = parameters.getRaw();
+
+        // Comprobamos todos los parametros y ponemos los que nos han indicado
         if (params.contains("-h") || params.contains("--help")) {
             showHelp();
         }
         if (params.contains("-i") || params.contains("--input")) {
             setInput();
         }
+        // Solo el input es necesario para trabajar
         if (!hasInput) {
             printError("--input es un parametro necesario.");
         }
@@ -434,6 +425,7 @@ public class Main extends Application {
             setBatch();
         }
 
+        // Ponemos el estado
         if (hasEncode && !hasDecode)
             status = 1;
         if (!hasEncode && hasDecode)
@@ -441,11 +433,13 @@ public class Main extends Application {
         if (hasEncode && hasDecode)
             status = 3;
 
-        // Faltaria poner el resto de parametros
-
+        // Iniciamos la app
         initApp(primaryStage);
     }
 
+    /**
+     * Pone el valor de los Tiles
+     */
     private void setNTiles() {
         int index = params.indexOf("--nTiles");
         if (index == -1) {
@@ -457,28 +451,36 @@ public class Main extends Application {
                 printError("No se ha encotrado el parametro");
             } else {
                 String value = params.get(dataIdx);
+                // Miramos si tiene dos valores
                 String[] tileData = value.split(",");
+                // Si tiene un solo valor, ponemos el mismo para las X y Y
                 if (tileData.length == 1) {
                     if (isNumeric(value)) {
                         NTILESY = Integer.parseInt(value);
-                        NTILESX =  NTILESY;
+                        NTILESX = NTILESY;
                     } else {
                         printError("Parametro erroneo");
                     }
                 } else if (tileData.length == 2) {
+                    // En caso de ser dos valores, ponemos el primero en X y el siguiente en Y
                     if (isNumeric(tileData[0]) && isNumeric(tileData[1])) {
-                        NTILESY = Integer.parseInt(tileData[0]);
-                        NTILESX = Integer.parseInt(tileData[1]);
+                        NTILESX = Integer.parseInt(tileData[0]);
+                        NTILESY = Integer.parseInt(tileData[1]);
                     } else {
+                        // Si no son ints, damos error
                         printError("Parametro erroneo");
                     }
                 } else {
+                    // si tiene mas de dos valores damos error
                     printError("Parametro erroneo");
                 }
             }
         }
     }
 
+    /**
+     * Pone el valor de rango
+     */
     private void setSeekRange() {
         int index = params.indexOf("--seekRange");
         if (index == -1) {
@@ -502,6 +504,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Pone el valor de GOP
+     */
     private void setGop() {
         int index = params.indexOf("--GOP");
         if (index == -1) {
@@ -515,7 +520,6 @@ public class Main extends Application {
                 String value = params.get(dataIdx);
                 if (isNumeric(value)) {
                     GOP = Integer.parseInt(value);
-
                     System.out.println("GOP: " + GOP);
                 } else {
                     printError("Parametro erroneo");
@@ -525,6 +529,9 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Ajusta la calidad
+     */
     private void setQuality() {
         int index = params.indexOf("--quality");
         if (index == -1) {
@@ -538,7 +545,6 @@ public class Main extends Application {
                 String value = params.get(dataIdx);
                 if (isNumeric(value)) {
                     QUALITY = Double.parseDouble(value);
-
                     System.out.println("Quality: " + QUALITY);
                 } else {
                     printError("Parametro erroneo");
@@ -550,19 +556,18 @@ public class Main extends Application {
 
 
     public void initApp(Stage primaryStage) throws Exception {
-
-        //Parent root = FXMLLoader.load(getClass().getResource("view/imageview.fxml"));
-        // FXMLLoader loader = new FXMLLoader(getClass().getResource("view/main.fxml"));
+        // Cargamos la vista
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/imageview.fxml"));
         Parent root = loader.load();
-        // GridPane pane = loader.load();
+        // Aplicamos la escena
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
-        //this makes all stages close and the app exit when the main stage is closed
+        //Al hacer click a la x se cierra el programa
         primaryStage.setOnCloseRequest(e -> {
             System.out.println("exit");
             System.exit(0);
         });
+        // Ponemos titulo
         primaryStage.setTitle("(´-﹏-`；)");
         primaryStage.show();
     }
