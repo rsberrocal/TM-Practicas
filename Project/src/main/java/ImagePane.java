@@ -314,6 +314,10 @@ public class ImagePane extends GridPane implements Initializable {
                 aux++;
             }
         }
+        for (int i = 0; i < imagesBuffered.size(); i++) {
+            imagesBuffered.set(i, filtreAveraging(imagesBuffered.get(i), Main.avaragingValue));
+        }
+
         listTilesInfo = tilesInfo;
         long endEncode = System.currentTimeMillis() - startEncode;
         System.out.println("Encoded all at " + endEncode + " ms");
