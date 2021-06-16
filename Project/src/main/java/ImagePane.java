@@ -533,27 +533,26 @@ public class ImagePane extends GridPane implements Initializable {
         Color white = new Color(255, 255, 255);
         Color black = new Color(0, 0, 0);
 
-        Color topPixel = null;
-        double topIntensity;
-
-        Color lowerPixel = null;
-        double lowerIntensity;
+        Color pixel1 = null;
+        double media1;
+        Color pixel2 = null;
+        double media2;
 
         // pasamos pixel por pixel
         for (int y = 0; y < a.getHeight() - 1; y++) {
             for (int x = 0; x < a.getWidth(); x++) {
 
                 // estas variables extraen el color con una altura de diferencia
-                topPixel = new Color(a.getRGB(x, y));
-                lowerPixel = new Color(a.getRGB(x, y + 1));
+                pixel1 = new Color(a.getRGB(x, y));
+                pixel2 = new Color(a.getRGB(x, y + 1));
 
                 // haremos la suma de los caneles de color i extraemos la media
-                topIntensity = (topPixel.getRed() + topPixel.getGreen() + topPixel.getBlue()) / 3;
-                lowerIntensity = (lowerPixel.getRed() + lowerPixel.getGreen() + lowerPixel.getBlue()) / 3;
+                media1 = (pixel1.getRed() + pixel1.getGreen() + pixel1.getBlue()) / 3;
+                media2 = (pixel2.getRed() + pixel2.getGreen() + pixel2.getBlue()) / 3;
 
-                // Obtenemos la diferencia entre la media sacada anteriormente y si es menor al threshold el pixel sera
-                // blanco sino, sera negro
-                if (Math.abs(topIntensity - lowerIntensity) < threshold) {
+                // Obtenemos la diferencia entre la media sacada anteriormente en valor absoluto y si es menor al
+                // threshold el pixel sera blanco sino, sera negro
+                if (Math.abs(media1 - media2) < threshold) {
                     a.setRGB(x, y, white.getRGB());
                 } else {
                     a.setRGB(x, y, black.getRGB());
@@ -571,38 +570,36 @@ public class ImagePane extends GridPane implements Initializable {
      * @return la imagen modificada
      */
     public BufferedImage filtreSaturacio(BufferedImage imatge, double s) {
-        WritableRaster raster = imatge.getRaster();
-        int width = imatge.getWidth();
-        int height = imatge.getHeight();
+        WritableRaster raster = imatge.getRaster(); //mapa bits del buffer image
+        int ancho = imatge.getWidth();
+        int altura = imatge.getHeight();
 
-        double[] r = new double[width * height];
-        double[] g = new double[width * height];
-        double[] b = new double[width * height];
+        double[] r = new double[ancho * altura];
+        double[] g = new double[ancho * altura];
+        double[] b = new double[ancho * altura];
 
         // Distribuimos los porcentages optimos para el efecto de saturacion
-        double RW = 0.3086;
-        double RG = 0.6084;
-        double RB = 0.0820;
+        double rt = 0.3, rg = 0.6, rb = 0.1;
 
         // llena los r, g, b con el contenido 3 capas de raster rgb
-        raster.getSamples(0, 0, width, height, 0, r);
-        raster.getSamples(0, 0, width, height, 1, g);
-        raster.getSamples(0, 0, width, height, 2, b);
+        raster.getSamples(0, 0, ancho, altura, 0, r);
+        raster.getSamples(0, 0, ancho, altura, 1, g);
+        raster.getSamples(0, 0, ancho, altura, 2, b);
 
-        // pasara por todod el mapa de bits i calculara el nuevo valor de cada canal
-        for (int x = 0; x < (width * height); x++) {
+        // pasara por todoo el mapa de bits i calculara el nuevo valor de cada canal
+        for (int x = 0; x < (ancho * altura); x++) {
             double rp = r[x];
             double gp = g[x];
             double bp = b[x];
-            r[x] = ((1 - s) * RW + s) * rp + ((1 - s) * RG) * gp + ((1 - s) * RB) * bp;
-            g[x] = ((1 - s) * RW) * rp + ((1 - s) * RG + s) * gp + ((1 - s) * RB) * bp;
-            b[x] = ((1 - s) * RW) * rp + ((1 - s) * RG) * gp + (1 - s) * RB + s * bp;
+            r[x] = ((1 - s) * rt + s) * rp + ((1 - s) * rg) * gp + ((1 - s) * rb) * bp;
+            g[x] = ((1 - s) * rt) * rp + ((1 - s) * rg + s) * gp + ((1 - s) * rb) * bp;
+            b[x] = ((1 - s) * rt) * rp + ((1 - s) * rg) * gp + (1 - s) * rb + s * bp;
         }
 
         // setea los nuevos valores en el mapa de bits
-        raster.setSamples(0, 0, width, height, 0, r);
-        raster.setSamples(0, 0, width, height, 1, g);
-        raster.setSamples(0, 0, width, height, 2, b);
+        raster.setSamples(0, 0, ancho, altura, 0, r);
+        raster.setSamples(0, 0, ancho, altura, 1, g);
+        raster.setSamples(0, 0, ancho, altura, 2, b);
 
         return imatge;
     }
